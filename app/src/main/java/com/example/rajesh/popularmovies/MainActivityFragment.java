@@ -13,6 +13,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.GridView;
 
+import org.json.JSONException;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -25,8 +27,11 @@ import java.net.URL;
  */
 public class MainActivityFragment extends Fragment {
 
+
     public MainActivityFragment() {
     }
+
+    ImageAdapter imageAdapter;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -89,20 +94,21 @@ public class MainActivityFragment extends Fragment {
         /*GridView gridView = (GridView)rootView.findViewById(R.id.grid_view);
         gridView.setAdapter(mForecastAdapter);*/
 
+        imageAdapter = new ImageAdapter(getActivity());
         GridView gridView = (GridView)rootView.findViewById(R.id.grid_view);
-        gridView.setAdapter(new ImageAdapter(getActivity()));
+        gridView.setAdapter(imageAdapter);
 
 
         return rootView;
 
     }
 
-    public class FetchMovieTask extends AsyncTask<String, Void, Void>{
+    public class FetchMovieTask extends AsyncTask<String, Void, String[]>{
 
         public final String LOG_TAG = FetchMovieTask.class.getSimpleName();
 
         @Override
-        protected Void doInBackground(String... params){
+        protected String[] doInBackground(String... params){
             // These two need to be declared outside the try/catch
             // so that they can be closed in the finally block.
             HttpURLConnection urlConnection = null;
@@ -183,9 +189,35 @@ public class MainActivityFragment extends Fragment {
                 }
             }
 
+            try{
+
+                String[] moviePosters = new JSONParser().getPosterDataFromJson(forecastJsonStr);
+                for (String s : moviePosters) {
+                    Log.v(LOG_TAG, "Movie Poster Link: " + s);
+                }
+                //return null;
+                return moviePosters;
+            }
+            catch (JSONException e) {
+                Log.e(LOG_TAG, "JSON Related Error ", e);
+                // JSONException handler
+                //forecastJsonStr = null;
+                //return null;
+            }
+
             return null;
         }
 
+        @Override
+        protected void onPostExecute(String[] strings) {
+            //super.onPostExecute(mForecastAdapter.addAll(Arrays.asList(strings)));
+            //imageAdapter.clear();
+            //imageAdapter.addAll(Arrays.asList(strings));
+
+            imageAdapter.updateData(strings);
+            //imageAdapter.notifyDataSetChanged();
+
+        }
     }
 }
 

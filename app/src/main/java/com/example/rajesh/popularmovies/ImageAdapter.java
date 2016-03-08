@@ -6,8 +6,12 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 
+import com.squareup.picasso.Picasso;
+
 public class ImageAdapter extends BaseAdapter {
     private Context mContext;
+    private ImageView imageView;
+    private String[] posterLinks = null;
 
     public ImageAdapter(Context c) {
         mContext = c;
@@ -25,9 +29,24 @@ public class ImageAdapter extends BaseAdapter {
         return 0;
     }
 
+    @Override
+    public void notifyDataSetChanged() {
+        super.notifyDataSetChanged();
+
+    }
+
+    public void updateData(String[] strings){
+        /*for (String posterLink: strings){
+        Picasso.with(mContext).load(posterLink).into(imageView);
+        }*/
+        //Picasso.with(mContext).load(strings[0]).into(imageView);
+        posterLinks=strings;
+        notifyDataSetChanged();
+    }
+
     // create a new ImageView for each item referenced by the Adapter
     public View getView(int position, View convertView, ViewGroup parent) {
-        ImageView imageView;
+        //ImageView imageView;
         if (convertView == null) {
             // if it's not recycled, initialize some attributes
             imageView = new ImageView(mContext);
@@ -39,16 +58,27 @@ public class ImageAdapter extends BaseAdapter {
         }
 
         imageView.findViewById(R.id.grid_item);
-        imageView.setImageResource(mThumbIds[position]);
+        if (posterLinks == null){
+        imageView.setImageResource(mThumbIds[position]);}
+        else{
+            Picasso.with(mContext).load(posterLinks[position]).fit().placeholder(R.drawable.no_image_available).into(imageView);
+        }
+
         return imageView;
     }
 
     // references to our images
     private Integer[] mThumbIds = {
-            R.drawable.ic_launcher, R.drawable.ic_launcher,
-            R.drawable.ic_launcher, R.drawable.ic_launcher,
-            R.drawable.ic_launcher, R.drawable.ic_launcher,
-            R.drawable.ic_launcher, R.drawable.ic_launcher,
+            R.drawable.no_image_available, R.drawable.no_image_available,
+            R.drawable.no_image_available, R.drawable.no_image_available,
+            R.drawable.no_image_available, R.drawable.no_image_available,
+            R.drawable.no_image_available, R.drawable.no_image_available,
+            R.drawable.no_image_available, R.drawable.no_image_available,
+            R.drawable.no_image_available, R.drawable.no_image_available,
+            R.drawable.no_image_available, R.drawable.no_image_available,
+            R.drawable.no_image_available, R.drawable.no_image_available,
+            R.drawable.no_image_available, R.drawable.no_image_available,
+            R.drawable.no_image_available, R.drawable.no_image_available
 
     };
 }
