@@ -23,7 +23,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 
 /**
- * A placeholder fragment containing a simple view.
+ * A placeholder fragment containing a simple view for main activity.
  */
 public class MainActivityFragment extends Fragment {
 
@@ -31,7 +31,7 @@ public class MainActivityFragment extends Fragment {
     public MainActivityFragment() {
     }
 
-    ImageAdapter imageAdapter;
+    ImageAdapter mImageAdapter;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -70,37 +70,11 @@ public class MainActivityFragment extends Fragment {
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_main, container, false);
 
-
-        /*ArrayList<String> weekForecast=new ArrayList<String>();
-        weekForecast.add("Today - Sunny - 88/63");
-        weekForecast.add("Tomorrow - Foggy - 70/46");
-        weekForecast.add("Weds - Cloudy - 72/63");
-        weekForecast.add("Thurs - Rainy - 64/51");
-        weekForecast.add("Fri - Foggy - 70/46");
-        weekForecast.add("Sat - Sunny - 76/68");
-
-        ArrayAdapter<String> mForecastAdapter = new ArrayAdapter<String>(getActivity(), R.layout.grid_item, weekForecast);*/
-
-        /*ArrayList<ImageView> weekForecast=new ArrayList<ImageView>();
-        ImageView droid = new ImageView(getContext());
-        droid.setImageResource(R.drawable.ic_launcher);
-        weekForecast.add(droid);
-        weekForecast.add(droid);
-        weekForecast.add(droid);
-        weekForecast.add(droid);
-        ArrayAdapter<ImageView> mForecastAdapter = new ArrayAdapter<ImageView>(getActivity(), R.layout.grid_item, weekForecast);*/
-
-
-        /*GridView gridView = (GridView)rootView.findViewById(R.id.grid_view);
-        gridView.setAdapter(mForecastAdapter);*/
-
-        imageAdapter = new ImageAdapter(getActivity());
+        mImageAdapter = new ImageAdapter(getActivity());
         GridView gridView = (GridView)rootView.findViewById(R.id.grid_view);
-        gridView.setAdapter(imageAdapter);
-
+        gridView.setAdapter(mImageAdapter);
 
         return rootView;
-
     }
 
     public class FetchMovieTask extends AsyncTask<String, Void, String[]>{
@@ -115,17 +89,9 @@ public class MainActivityFragment extends Fragment {
             BufferedReader reader = null;
 
             // Will contain the raw JSON response as a string.
-            String forecastJsonStr = null;
+            String movieJsonStr = null;
 
             try {
-                // Construct the URL for the OpenWeatherMap query
-                // Possible parameters are available at OWM's forecast API page, at
-                // http://openweathermap.org/API#forecast
-                //URL url = new URL("http://api.themoviedb.org/3/discover/movie/?sort_by=popular.desc&api_key=cbb2a0a4759143e9eb5a8fbaa69eac66");
-                //URL url = new URL("http://api.openweathermap.org/data/2.5/forecast/daily?q=94043&mode=json&units=metric&cnt=7&APPID=44db6a862fba0b067b1930da0d769e98");
-                // Create the request to OpenWeatherMap, and open the connection
-
-
                 final String SCHEME="http";
                 final String FORECAST_BASE_URL="//api.themoviedb.org/3/discover/movie/";
                 final String QUERY_PARAM="sort_by";
@@ -137,7 +103,7 @@ public class MainActivityFragment extends Fragment {
                 builtUri.appendQueryParameter(QUERY_PARAM, params[0]);
                 builtUri.appendQueryParameter(APIKEY_PARAM, BuildConfig.THE_MOVIE_DB_API_KEY);
 
-                Log.v(LOG_TAG, "Build URI:" + builtUri.toString());
+                //Log.v(LOG_TAG, "Build URI:" + builtUri.toString());
 
                 URL url=new URL(builtUri.toString());
                 urlConnection = (HttpURLConnection) url.openConnection();
@@ -149,7 +115,7 @@ public class MainActivityFragment extends Fragment {
                 StringBuffer buffer = new StringBuffer();
                 if (inputStream == null) {
                     // Nothing to do.
-                    //forecastJsonStr = null;
+                    //movieJsonStr = null;
                     return null;
                 }
                 reader = new BufferedReader(new InputStreamReader(inputStream));
@@ -164,17 +130,17 @@ public class MainActivityFragment extends Fragment {
 
                 if (buffer.length() == 0) {
                     // Stream was empty.  No point in parsing.
-                    //forecastJsonStr = null;
+                    //movieJsonStr = null;
                     return null;
                 }
-                forecastJsonStr = buffer.toString();
-                Log.v(LOG_TAG, "Movie JSON String:" + forecastJsonStr);
+                movieJsonStr = buffer.toString();
+                //Log.v(LOG_TAG, "Movie JSON String:" + movieJsonStr);
 
             } catch (IOException e) {
                 Log.e(LOG_TAG, "Error ", e);
-                // If the code didn't successfully get the weather data, there's no point in attempting
+                // If the code didn't successfully get the movie data, there's no point in attempting
                 // to parse it.
-                //forecastJsonStr = null;
+                //movieJsonStr = null;
                 return null;
             } finally{
                 if (urlConnection != null) {
@@ -191,17 +157,17 @@ public class MainActivityFragment extends Fragment {
 
             try{
 
-                String[] moviePosters = new JSONParser().getPosterDataFromJson(forecastJsonStr);
-                for (String s : moviePosters) {
-                    Log.v(LOG_TAG, "Movie Poster Link: " + s);
-                }
+                String[] moviePosters = new JSONParser().getPosterDataFromJson(movieJsonStr);
+                //for (String s : moviePosters) {
+                //    Log.v(LOG_TAG, "Movie Poster Link: " + s);
+                //}
                 //return null;
                 return moviePosters;
             }
             catch (JSONException e) {
                 Log.e(LOG_TAG, "JSON Related Error ", e);
                 // JSONException handler
-                //forecastJsonStr = null;
+                //movieJsonStr = null;
                 //return null;
             }
 
@@ -210,12 +176,11 @@ public class MainActivityFragment extends Fragment {
 
         @Override
         protected void onPostExecute(String[] strings) {
-            //super.onPostExecute(mForecastAdapter.addAll(Arrays.asList(strings)));
-            //imageAdapter.clear();
-            //imageAdapter.addAll(Arrays.asList(strings));
+            //mImageAdapter.clear();
+            //mImageAdapter.addAll(Arrays.asList(strings));
 
-            imageAdapter.updateData(strings);
-            //imageAdapter.notifyDataSetChanged();
+            mImageAdapter.updateData(strings);
+            //mImageAdapter.notifyDataSetChanged();
 
         }
     }

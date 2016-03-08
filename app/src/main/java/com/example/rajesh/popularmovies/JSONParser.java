@@ -21,23 +21,19 @@ public class JSONParser {
 
         JSONObject movieJson = new JSONObject(movieJsonStr);
         JSONArray movieArray = movieJson.getJSONArray(THDB_MOVIE);
-
-        String[] resultStrs = new String[movieArray.length()];
-
-
+        String[] resultStr = new String[movieArray.length()];
 
         for(int i = 0; i < movieArray.length(); i++) {
-
-            // Get the JSON object representing the day
+            // Get the JSON object representing the movie detail
             JSONObject movieDetail = movieArray.getJSONObject(i);
 
             //JSONObject posterObject = movieDetail.getJSONObject(POSTER_IMG);
             String posterLink=movieDetail.getString(POSTER_IMG);
-
-            resultStrs[i] = BASE_URL + IMG_SIZE + posterLink;
+            //Building the movie poster URI
+            resultStr[i] = BASE_URL + IMG_SIZE + posterLink;
         }
 
-        return resultStrs;
+        return resultStr;
 
     }
 }
