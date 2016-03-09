@@ -11,10 +11,11 @@ import com.squareup.picasso.Picasso;
 public class ImageAdapter extends BaseAdapter {
     private Context mContext;
     private ImageView mImageView;
-    private String[] mPosterLinks = {};
+    private String[] mPosterLinks;
 
-    public ImageAdapter(Context c) {
+    public ImageAdapter(Context c, String[] posterLinks) {
         mContext = c;
+        mPosterLinks = posterLinks;
     }
 
     public int getCount() {
@@ -49,6 +50,7 @@ public class ImageAdapter extends BaseAdapter {
         if (convertView == null) {
             // if it's not recycled, initialize some attributes
             mImageView = new ImageView(mContext);
+           //mImageView = LayoutInflater.from(getContext()).inflate(R.layout.grid_item, parent, false);
             //mImageView.setLayoutParams(new GridView.LayoutParams(85, 85));
             //mImageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
             //mImageView.setPadding(8, 8, 8, 8);

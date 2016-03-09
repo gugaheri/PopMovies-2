@@ -4,5 +4,6 @@
     <string name="action_refresh">Refresh</string>
 
     <string name="movie_poster">Movie Poster</string>
+    <string name="title_activity_detail">Movie Detail</string>
 
 </resources>

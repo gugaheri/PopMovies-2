@@ -11,7 +11,9 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.GridView;
+import android.widget.Toast;
 
 import org.json.JSONException;
 
@@ -32,12 +34,29 @@ public class MainActivityFragment extends Fragment {
     }
 
     ImageAdapter mImageAdapter;
+    String[] mPosterLinks;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         //Add this line in order for this fragment to handle menu events.
         setHasOptionsMenu(true);
+        if(savedInstanceState == null || !savedInstanceState.containsKey("posterLinks")) {
+            mPosterLinks=new String[0];
+        }
+        else {
+            mPosterLinks = savedInstanceState.getStringArray("posterLinks");
+            /*for (String s : mPosterLinks) {
+                Log.v("ROTATION-GET", "Movie Poster Link: " + s);
+            }*/
+        }
+        /*if(savedInstanceState != null) {
+            mPosterLinks = savedInstanceState.getStringArray("posterLinks");
+            for (String s : mPosterLinks) {
+                Log.v("ROTATION-GET", "Movie Poster Link: " + s);
+            }
+        }*/
+
     }
 
     @Override
@@ -64,15 +83,31 @@ public class MainActivityFragment extends Fragment {
         return super.onOptionsItemSelected(item);
     }
 
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        outState.putStringArray("posterLinks", mPosterLinks);
+        /*for (String s : mPosterLinks) {
+            Log.v("ROTATION-PUT", "Movie Poster Link: " + s);
+        }*/
+        super.onSaveInstanceState(outState);
+
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_main, container, false);
 
-        mImageAdapter = new ImageAdapter(getActivity());
+        mImageAdapter = new ImageAdapter(getActivity(), mPosterLinks);
         GridView gridView = (GridView)rootView.findViewById(R.id.grid_view);
         gridView.setAdapter(mImageAdapter);
+
+        gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Toast.makeText(getActivity(), mImageAdapter.getItem(position).toString(), Toast.LENGTH_SHORT).show();
+            }
+        });
 
         return rootView;
     }
@@ -178,8 +213,8 @@ public class MainActivityFragment extends Fragment {
         protected void onPostExecute(String[] strings) {
             //mImageAdapter.clear();
             //mImageAdapter.addAll(Arrays.asList(strings));
-
-            mImageAdapter.updateData(strings);
+            mPosterLinks = strings;
+            mImageAdapter.updateData(mPosterLinks);
             //mImageAdapter.notifyDataSetChanged();
 
         }
