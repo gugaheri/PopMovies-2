@@ -1,9 +1,11 @@
 package com.example.rajesh.popularmovies;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -72,6 +74,13 @@ public class MainActivityFragment extends Fragment {
 
     }
 
+    private void updateMovieData(){
+        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getActivity());
+        String sortBy = sharedPref.getString(getString(R.string.pref_sort), getString(R.string.pref_default));
+        new FetchMovieTask().execute(sortBy); // new FetchMovieTask().execute("popular.desc"); Network call
+        //new FetchMovieTask().execute("vote_average.desc"); //Network call
+    }
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle action bar item clicks here. The action bar will
@@ -81,8 +90,7 @@ public class MainActivityFragment extends Fragment {
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_refresh) {
-            new FetchMovieTask().execute("popular.desc"); //Network call
-            //new FetchMovieTask().execute("vote_average.desc"); //Network call
+            updateMovieData();
             return true;
         }
 
@@ -92,7 +100,7 @@ public class MainActivityFragment extends Fragment {
     @Override
     public void onStart() {
         super.onStart();
-        new FetchMovieTask().execute("popular.desc");
+        updateMovieData();
     }
 
     @Override
