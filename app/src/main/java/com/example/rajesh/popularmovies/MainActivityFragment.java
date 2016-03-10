@@ -1,5 +1,6 @@
 package com.example.rajesh.popularmovies;
 
+import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -35,6 +36,9 @@ public class MainActivityFragment extends Fragment {
 
     ImageAdapter mImageAdapter;
     String[] mPosterLinks;
+    // String to contain the raw JSON response as a string.
+    public String movieJsonStr;
+    public final String LOG_TAG = FetchMovieTask.class.getSimpleName();
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -43,9 +47,11 @@ public class MainActivityFragment extends Fragment {
         setHasOptionsMenu(true);
         if(savedInstanceState == null || !savedInstanceState.containsKey("posterLinks")) {
             mPosterLinks=new String[0];
+            movieJsonStr = null;
         }
         else {
             mPosterLinks = savedInstanceState.getStringArray("posterLinks");
+            movieJsonStr = savedInstanceState.getString("movieJsonStr");
             /*for (String s : mPosterLinks) {
                 Log.v("ROTATION-GET", "Movie Poster Link: " + s);
             }*/
@@ -84,8 +90,15 @@ public class MainActivityFragment extends Fragment {
     }
 
     @Override
+    public void onStart() {
+        super.onStart();
+        new FetchMovieTask().execute("popular.desc");
+    }
+
+    @Override
     public void onSaveInstanceState(Bundle outState) {
         outState.putStringArray("posterLinks", mPosterLinks);
+        outState.putString("movieJsonStr", movieJsonStr);
         /*for (String s : mPosterLinks) {
             Log.v("ROTATION-PUT", "Movie Poster Link: " + s);
         }*/
@@ -106,6 +119,15 @@ public class MainActivityFragment extends Fragment {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Toast.makeText(getActivity(), mImageAdapter.getItem(position).toString(), Toast.LENGTH_SHORT).show();
+                Intent showDetail = new Intent(getActivity(), DetailActivity.class);
+                try {
+                    showDetail.putStringArrayListExtra(Intent.EXTRA_TEXT, new JSONParser().getMovieDataFromJson(movieJsonStr, position));
+                    startActivity(showDetail);
+                }
+                catch(JSONException e) {
+                    Log.e(LOG_TAG, "Error ", e);
+                }
+
             }
         });
 
@@ -123,8 +145,7 @@ public class MainActivityFragment extends Fragment {
             HttpURLConnection urlConnection = null;
             BufferedReader reader = null;
 
-            // Will contain the raw JSON response as a string.
-            String movieJsonStr = null;
+
 
             try {
                 final String SCHEME="http";

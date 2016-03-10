@@ -5,5 +5,7 @@
     <color name="colorAccent">#FF4081</color>
     <color name="colorBar">#363434</color>
     <color name="fragment_background">#FFFFFF</color>
+    <color name="title_background">#00bfa5</color>
+
 
 </resources>
