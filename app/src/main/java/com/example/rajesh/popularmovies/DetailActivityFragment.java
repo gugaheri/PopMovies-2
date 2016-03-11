@@ -28,12 +28,12 @@ public class DetailActivityFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_detail, container, false);
+
         Intent showDetail = getActivity().getIntent();
         mMovieDetail = showDetail.getStringArrayListExtra(Intent.EXTRA_TEXT);
 
         TextView movieTitle = (TextView)rootView.findViewById(R.id.movie_title);
         movieTitle.setText(mMovieDetail.get(0));
-
 
         ImageView moviePoster = (ImageView)rootView.findViewById(R.id.movie_poster);
         Picasso.with(getActivity()).load(mMovieDetail.get(1)).fit().placeholder(R.drawable.no_image_available).into(moviePoster);

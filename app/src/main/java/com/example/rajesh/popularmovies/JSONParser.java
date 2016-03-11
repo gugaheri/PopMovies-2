@@ -21,6 +21,7 @@ public class JSONParser {
     final String VOTE_AVERAGE = "vote_average";
     final String RELEASE_DATE = "release_date";
 
+    /** Method for getting poster links for Main Activity */
     public String[] getPosterDataFromJson(String movieJsonStr)
             throws JSONException {
 
@@ -31,8 +32,6 @@ public class JSONParser {
         for(int i = 0; i < movieArray.length(); i++) {
             // Get the JSON object representing the movie detail
             JSONObject movieDetail = movieArray.getJSONObject(i);
-
-            //JSONObject posterObject = movieDetail.getJSONObject(POSTER_IMG);
             String posterLink=movieDetail.getString(POSTER_IMG);
             //Building the movie poster URI
             resultStr[i] = BASE_URL + IMG_SIZE + posterLink;
@@ -41,6 +40,7 @@ public class JSONParser {
         return resultStr;
     }
 
+    /** Method for getting movie details for Detail Activity */
     public ArrayList<String> getMovieDataFromJson(String movieJsonStr, int position )
             throws JSONException {
 

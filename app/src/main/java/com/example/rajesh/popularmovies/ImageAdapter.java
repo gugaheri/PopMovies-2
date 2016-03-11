@@ -8,6 +8,7 @@ import android.widget.ImageView;
 
 import com.squareup.picasso.Picasso;
 
+/** Custom Image Adapter */
 public class ImageAdapter extends BaseAdapter {
     private Context mContext;
     private ImageView mImageView;
@@ -37,10 +38,6 @@ public class ImageAdapter extends BaseAdapter {
     }
 
     public void updateData(String[] strings){
-        /*for (String posterLink: strings){
-        Picasso.with(mContext).load(posterLink).into(mImageView);
-        }*/
-        //Picasso.with(mContext).load(strings[0]).into(mImageView);
         mPosterLinks =strings;
         notifyDataSetChanged();
     }
@@ -50,16 +47,11 @@ public class ImageAdapter extends BaseAdapter {
         if (convertView == null) {
             // if it's not recycled, initialize some attributes
             mImageView = new ImageView(mContext);
-           //mImageView = LayoutInflater.from(getContext()).inflate(R.layout.grid_item, parent, false);
-            //mImageView.setLayoutParams(new GridView.LayoutParams(85, 85));
-            //mImageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
-            //mImageView.setPadding(8, 8, 8, 8);
         } else {
             mImageView = (ImageView) convertView;
         }
 
         mImageView.findViewById(R.id.grid_item);
-
         Picasso.with(mContext).load(mPosterLinks[position]).fit().placeholder(R.drawable.no_image_available).into(mImageView);
 
         return mImageView;

@@ -16,7 +16,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.GridView;
-import android.widget.Toast;
 
 import org.json.JSONException;
 
@@ -47,6 +46,8 @@ public class MainActivityFragment extends Fragment {
         super.onCreate(savedInstanceState);
         //Add this line in order for this fragment to handle menu events.
         setHasOptionsMenu(true);
+
+        //savedInstanceState used to restore data on rotation of phone
         if(savedInstanceState == null || !savedInstanceState.containsKey("posterLinks")) {
             mPosterLinks=new String[0];
             movieJsonStr = null;
@@ -54,16 +55,7 @@ public class MainActivityFragment extends Fragment {
         else {
             mPosterLinks = savedInstanceState.getStringArray("posterLinks");
             movieJsonStr = savedInstanceState.getString("movieJsonStr");
-            /*for (String s : mPosterLinks) {
-                Log.v("ROTATION-GET", "Movie Poster Link: " + s);
-            }*/
         }
-        /*if(savedInstanceState != null) {
-            mPosterLinks = savedInstanceState.getStringArray("posterLinks");
-            for (String s : mPosterLinks) {
-                Log.v("ROTATION-GET", "Movie Poster Link: " + s);
-            }
-        }*/
 
     }
 
@@ -74,11 +66,11 @@ public class MainActivityFragment extends Fragment {
 
     }
 
+    /** Method for calling background thread with parameter got from Settings Menu */
     private void updateMovieData(){
         SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getActivity());
         String sortBy = sharedPref.getString(getString(R.string.pref_sort), getString(R.string.pref_default));
-        new FetchMovieTask().execute(sortBy); // new FetchMovieTask().execute("popular.desc"); Network call
-        //new FetchMovieTask().execute("vote_average.desc"); //Network call
+        new FetchMovieTask().execute(sortBy);
     }
 
     @Override
@@ -89,10 +81,10 @@ public class MainActivityFragment extends Fragment {
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_refresh) {
+        /*if (id == R.id.action_refresh) {
             updateMovieData();
             return true;
-        }
+        }*/
 
         return super.onOptionsItemSelected(item);
     }
@@ -107,11 +99,8 @@ public class MainActivityFragment extends Fragment {
     public void onSaveInstanceState(Bundle outState) {
         outState.putStringArray("posterLinks", mPosterLinks);
         outState.putString("movieJsonStr", movieJsonStr);
-        /*for (String s : mPosterLinks) {
-            Log.v("ROTATION-PUT", "Movie Poster Link: " + s);
-        }*/
-        super.onSaveInstanceState(outState);
 
+        super.onSaveInstanceState(outState);
     }
 
     @Override
@@ -123,17 +112,18 @@ public class MainActivityFragment extends Fragment {
         GridView gridView = (GridView)rootView.findViewById(R.id.grid_view);
         gridView.setAdapter(mImageAdapter);
 
+        // Launch the Detail Activity on clicking the poster thumbnail
         gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Toast.makeText(getActivity(), mImageAdapter.getItem(position).toString(), Toast.LENGTH_SHORT).show();
+                //Toast.makeText(getActivity(), mImageAdapter.getItem(position).toString(), Toast.LENGTH_SHORT).show();
                 Intent showDetail = new Intent(getActivity(), DetailActivity.class);
                 try {
                     showDetail.putStringArrayListExtra(Intent.EXTRA_TEXT, new JSONParser().getMovieDataFromJson(movieJsonStr, position));
                     startActivity(showDetail);
                 }
                 catch(JSONException e) {
-                    Log.e(LOG_TAG, "Error ", e);
+                    Log.e(LOG_TAG, "JSON Error", e);
                 }
 
             }
@@ -142,6 +132,7 @@ public class MainActivityFragment extends Fragment {
         return rootView;
     }
 
+    /** Background Thread for getting Movie Details through the network call to an API */
     public class FetchMovieTask extends AsyncTask<String, Void, String[]>{
 
         public final String LOG_TAG = FetchMovieTask.class.getSimpleName();
@@ -152,8 +143,6 @@ public class MainActivityFragment extends Fragment {
             // so that they can be closed in the finally block.
             HttpURLConnection urlConnection = null;
             BufferedReader reader = null;
-
-
 
             try {
                 final String SCHEME="http";
@@ -166,7 +155,6 @@ public class MainActivityFragment extends Fragment {
                 builtUri.path(FORECAST_BASE_URL);
                 builtUri.appendQueryParameter(QUERY_PARAM, params[0]);
                 builtUri.appendQueryParameter(APIKEY_PARAM, BuildConfig.THE_MOVIE_DB_API_KEY);
-
                 //Log.v(LOG_TAG, "Build URI:" + builtUri.toString());
 
                 URL url=new URL(builtUri.toString());
@@ -222,17 +210,11 @@ public class MainActivityFragment extends Fragment {
             try{
 
                 String[] moviePosters = new JSONParser().getPosterDataFromJson(movieJsonStr);
-                //for (String s : moviePosters) {
-                //    Log.v(LOG_TAG, "Movie Poster Link: " + s);
-                //}
-                //return null;
+
                 return moviePosters;
             }
             catch (JSONException e) {
-                Log.e(LOG_TAG, "JSON Related Error ", e);
-                // JSONException handler
-                //movieJsonStr = null;
-                //return null;
+                Log.e(LOG_TAG, "JSON Related Error", e);
             }
 
             return null;
@@ -240,12 +222,8 @@ public class MainActivityFragment extends Fragment {
 
         @Override
         protected void onPostExecute(String[] strings) {
-            //mImageAdapter.clear();
-            //mImageAdapter.addAll(Arrays.asList(strings));
             mPosterLinks = strings;
             mImageAdapter.updateData(mPosterLinks);
-            //mImageAdapter.notifyDataSetChanged();
-
         }
     }
 }
