@@ -146,16 +146,17 @@ public class MainActivityFragment extends Fragment {
 
             try {
                 final String SCHEME="http";
-                final String FORECAST_BASE_URL="//api.themoviedb.org/3/discover/movie/";
-                final String QUERY_PARAM="sort_by";
+                final String FORECAST_BASE_URL="//api.themoviedb.org/3/movie/";
+                //final String QUERY_PARAM="sort_by";
                 final String APIKEY_PARAM="api_key";
 
                 Uri.Builder builtUri=new Uri.Builder();
                 builtUri.scheme(SCHEME);
                 builtUri.path(FORECAST_BASE_URL);
-                builtUri.appendQueryParameter(QUERY_PARAM, params[0]);
+                //builtUri.appendQueryParameter(QUERY_PARAM, params[0]);
+                builtUri.appendPath(params[0]);
                 builtUri.appendQueryParameter(APIKEY_PARAM, BuildConfig.THE_MOVIE_DB_API_KEY);
-                //Log.v(LOG_TAG, "Build URI:" + builtUri.toString());
+                Log.v(LOG_TAG, "Build URI:" + builtUri.toString());
 
                 URL url=new URL(builtUri.toString());
                 urlConnection = (HttpURLConnection) url.openConnection();
