@@ -25,4 +25,8 @@
         <item>@string/pref_highest_rated</item>
     </string-array>
 
+    <!-- Trailera and Reviews related strings-->
+    <string name="movie_review_header">Reviews:</string>
+    <string name="movie_trailer_header">Trailers:</string>
+
 </resources>

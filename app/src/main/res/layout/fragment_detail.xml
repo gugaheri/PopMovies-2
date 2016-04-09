@@ -8,7 +8,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
     android:orientation="vertical" >
 
     <TextView
@@ -56,6 +56,55 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingLeft="@dimen/padding" />
+
+    <TextView
+        android:id="@+id/line"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@android:color/darker_gray"
+        android:layout_marginTop="@dimen/padding"
+        android:layout_marginBottom="@dimen/padding"/>
+
+    <TextView
+        android:id="@+id/movie_trailer_header"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/movie_trailer_header"
+        android:textStyle="bold"
+        android:paddingBottom="@dimen/padding"/>
+
+    <GridView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:numColumns="auto_fit"
+        android:id="@+id/trailer_grid_view"
+        android:paddingLeft="@dimen/padding"
+        android:horizontalSpacing="@dimen/padding"
+        android:verticalSpacing="@dimen/padding"/>
+
+    <TextView
+        android:id="@+id/line_next"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@android:color/darker_gray"
+        android:layout_marginTop="@dimen/padding"
+        android:layout_marginBottom="@dimen/padding"/>
+
+    <TextView
+        android:id="@+id/movie_review_header"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/movie_review_header"
+        android:textStyle="bold"
+        android:paddingBottom="@dimen/padding"/>
+
+    <ListView
+        android:id="@+id/listview_reviews"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingLeft="@dimen/padding"/>
+
+
 
 </LinearLayout>
 </ScrollView>

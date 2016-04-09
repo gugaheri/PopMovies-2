@@ -20,6 +20,12 @@ public class JSONParser {
     final String OVERVIEW = "overview";
     final String VOTE_AVERAGE = "vote_average";
     final String RELEASE_DATE = "release_date";
+    final String MOVIE_ID = "id";
+    final String REVIEWER = "author";
+    final String REVIEW = "content";
+    final String TRAILER_KEY = "key";
+    final String TRAILER_THUMBNAIL = "http://img.youtube.com/vi/";
+    final String TRAILER_THUMBNAIL_EXT = "/default.jpg";
 
     /** Method for getting poster links for Main Activity */
     public String[] getPosterDataFromJson(String movieJsonStr)
@@ -54,8 +60,69 @@ public class JSONParser {
         resultStr.add(movieDetail.getString(RELEASE_DATE));
         resultStr.add(movieDetail.getString(VOTE_AVERAGE));
         resultStr.add(movieDetail.getString(OVERVIEW));
+        resultStr.add(movieDetail.getString(MOVIE_ID));
 
         return resultStr;
     }
 
+    /** Method for getting movie reviews for Detail Activity */
+    public String[] getReviewDataFromJson(String movieReviewStr)
+            throws JSONException {
+
+        JSONObject reviewJson = new JSONObject(movieReviewStr);
+        JSONArray reviewArray = reviewJson.getJSONArray(THDB_MOVIE);
+        String[] resultStr = new String[reviewArray.length()];
+
+        for(int i = 0; i < reviewArray.length(); i++) {
+            // Get the JSON object representing the movie detail
+            JSONObject reviewDetail = reviewArray.getJSONObject(i);
+            String reviewer = reviewDetail.getString(REVIEWER);
+            String review = reviewDetail.getString(REVIEW);
+
+            if (null == reviewer){
+                reviewer = "Author: Anonymous";
+            }else{
+                reviewer = "Author: " + reviewer;
+            }
+
+            //Building the movie review
+            resultStr[i] = reviewer + "\n" + review;
+        }
+
+        return resultStr;
+    }
+
+    /** Method for getting movie trailers for Detail Activity */
+    public String[] getTrailerDataFromJson(String movieTrailerStr)
+            throws JSONException {
+
+        String[] resultStrArray = getTrailerKey(movieTrailerStr);
+        String[] resultStr = new String[resultStrArray.length];
+
+        for(int i = 0; i < resultStrArray.length; i++) {
+            //Building the movie trailer URI
+            resultStr[i] = TRAILER_THUMBNAIL + resultStrArray[i] + TRAILER_THUMBNAIL_EXT;
+        }
+
+        return resultStr;
+    }
+
+    /** Method for getting movie trailers video ids for Detail Activity and Youtube */
+    public String[] getTrailerKey(String movieTrailerStr)
+            throws JSONException {
+
+        JSONObject TrailerJson = new JSONObject(movieTrailerStr);
+        JSONArray trailerArray = TrailerJson.getJSONArray(THDB_MOVIE);
+        String[] resultStr = new String[trailerArray.length()];
+
+        for(int i = 0; i < trailerArray.length(); i++) {
+            // Get the JSON object representing the movie detail
+            JSONObject reviewDetail = trailerArray.getJSONObject(i);
+            String trailer_key = reviewDetail.getString(TRAILER_KEY);
+            //Building the movie trailer video ids URI
+            resultStr[i] = trailer_key;
+        }
+
+        return resultStr;
+    }
 }
