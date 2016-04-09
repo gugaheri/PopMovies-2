@@ -31,8 +31,19 @@ public class DetailActivityFragment extends Fragment {
 
 //    private String[] mReviews = {""};
 //    private ArrayAdapter<String> mReviewAdapter;
-    public static ImageAdapter sImageAdapter;
+    public static ArrayList<String> sReviews;
+    public static String[] sTrailers;
+    public static ImageAdapter sTrailerAdapter;
     public static ArrayAdapter<String> sReviewAdapter;
+
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        outState.putStringArrayList("reviews", sReviews);
+        outState.putStringArray("trailerLinks", sTrailers);
+
+        super.onSaveInstanceState(outState);
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -40,10 +51,19 @@ public class DetailActivityFragment extends Fragment {
         Intent showDetail = getActivity().getIntent();
         mMovieDetail = showDetail.getStringArrayListExtra(Intent.EXTRA_TEXT);
 
-        View rootView = inflater.inflate(R.layout.fragment_detail, container, false);
+        //savedInstanceState used to restore data on rotation of phone
+        if(savedInstanceState == null || !savedInstanceState.containsKey("reviews") || !savedInstanceState.containsKey("trailerLinks")) {
+            sReviews = new ArrayList<String>();
+            sTrailers = new String[0];
+            new FetchTrailerTask().execute(mMovieDetail.get(5));
+            new FetchReviewTask().execute(mMovieDetail.get(5));
+        }
+        else {
+            sReviews = savedInstanceState.getStringArrayList("reviews");
+            sTrailers = savedInstanceState.getStringArray("trailerLinks");
+        }
 
-//        Intent showDetail = getActivity().getIntent();
-//        mMovieDetail = showDetail.getStringArrayListExtra(Intent.EXTRA_TEXT);
+        View rootView = inflater.inflate(R.layout.fragment_detail, container, false);
 
         TextView movieTitle = (TextView)rootView.findViewById(R.id.movie_title);
         movieTitle.setText(mMovieDetail.get(0));
@@ -60,17 +80,17 @@ public class DetailActivityFragment extends Fragment {
         TextView movieOverview = (TextView)rootView.findViewById(R.id.movie_overview);
         movieOverview.setText(mMovieDetail.get(4));
 
-        sImageAdapter = new ImageAdapter(getActivity(), new String[0]);
-        new FetchTrailerTask().execute(mMovieDetail.get(5));
-        GridView gridView = (GridView)rootView.findViewById(R.id.trailer_grid_view);
-        gridView.setAdapter(sImageAdapter);
+        sTrailerAdapter = new ImageAdapter(getActivity(), sTrailers);
+        sReviewAdapter = new ArrayAdapter<String>(getActivity(), R.layout.review_item, R.id.review_item_textview, sReviews);
+//        trailerAdapter = new ImageAdapter(getActivity(), new String[0]);
+//        reviewAdapter = new ArrayAdapter<String>(getActivity(), R.layout.review_item, R.id.review_item_textview, new ArrayList<String>());
 
-
+//        new FetchTrailerTask().execute(mMovieDetail.get(5));
 //        new FetchReviewTask().execute(mMovieDetail.get(5));
-//        Log.v(LOG_TAG, "reviews" + reviews[0]);
-//        mReviewAdapter = new ArrayAdapter<String>(getActivity(), R.layout.review_item, R.id.review_item_textview, new ArrayList<String>(Arrays.asList(reviews)));
-        sReviewAdapter = new ArrayAdapter<String>(getActivity(), R.layout.review_item, R.id.review_item_textview, new ArrayList<String>());
-        new FetchReviewTask().execute(mMovieDetail.get(5));
+
+        GridView gridView = (GridView)rootView.findViewById(R.id.trailer_grid_view);
+        gridView.setAdapter(sTrailerAdapter);
+
         //Log.v(LOG_TAG, "reviews:" + reviews[0]);
         ListView listView = (ListView) rootView.findViewById(R.id.listview_reviews);
 //        mReviewAdapter.notifyDataSetChanged();

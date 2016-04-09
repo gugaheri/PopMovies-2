@@ -16,6 +16,8 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.Arrays;
 
 /** Background Thread for getting Movie Details through the network call to an API */
 public class FetchReviewTask extends AsyncTask<String, Void, String[]> {
@@ -110,12 +112,9 @@ public class FetchReviewTask extends AsyncTask<String, Void, String[]> {
 
     @Override
     protected void onPostExecute(String[] strings) {
-//        DetailActivityFragment.reviews = strings;
-//        DetailActivityFragment.mReviewAdapter.notifyDataSetChanged();
+        DetailActivityFragment.sReviews = new ArrayList<String>(Arrays.asList(strings));
         DetailActivityFragment.sReviewAdapter.clear();
-        DetailActivityFragment.sReviewAdapter.addAll(strings);
+        DetailActivityFragment.sReviewAdapter.addAll(DetailActivityFragment.sReviews);
         DetailActivityFragment.sReviewAdapter.notifyDataSetChanged();
-//        Log.v(LOG_TAG, strings[0]);
-        //Log.v(LOG_TAG, "reviews" + DetailActivityFragment.reviews[0]);
     }
 }

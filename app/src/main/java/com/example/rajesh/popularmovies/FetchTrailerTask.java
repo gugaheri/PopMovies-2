@@ -106,6 +106,7 @@ public class FetchTrailerTask extends AsyncTask<String, Void, String[]> {
 
     @Override
     protected void onPostExecute(String[] strings) {
-        DetailActivityFragment.sImageAdapter.updateData(strings);
+        DetailActivityFragment.sTrailers = strings;
+        DetailActivityFragment.sTrailerAdapter.updateData(DetailActivityFragment.sTrailers);
     }
 }
