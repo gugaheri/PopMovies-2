@@ -25,7 +25,7 @@ public class JSONParser {
     final String REVIEW = "content";
     final String TRAILER_KEY = "key";
     final String TRAILER_THUMBNAIL = "http://img.youtube.com/vi/";
-    final String TRAILER_THUMBNAIL_EXT = "/default.jpg";
+    final String TRAILER_THUMBNAIL_EXT = "/mqdefault.jpg";
 
     /** Method for getting poster links for Main Activity */
     public String[] getPosterDataFromJson(String movieJsonStr)
@@ -95,7 +95,7 @@ public class JSONParser {
     /** Method for getting movie trailers for Detail Activity */
     public String[] getTrailerDataFromJson(String movieTrailerStr)
             throws JSONException {
-
+        // getting trailer keys using method getTrailerKey(movieTrailerStr)
         String[] resultStrArray = getTrailerKey(movieTrailerStr);
         String[] resultStr = new String[resultStrArray.length];
 

@@ -51,6 +51,7 @@ public class MainActivityFragment extends Fragment {
         if(savedInstanceState == null || !savedInstanceState.containsKey("posterLinks")) {
             mPosterLinks=new String[0];
             movieJsonStr = null;
+            updateMovieData();
         }
         else {
             mPosterLinks = savedInstanceState.getStringArray("posterLinks");
@@ -89,11 +90,11 @@ public class MainActivityFragment extends Fragment {
         return super.onOptionsItemSelected(item);
     }
 
-    @Override
-    public void onStart() {
-        super.onStart();
-        updateMovieData();
-    }
+//    @Override
+//    public void onStart() {
+//        super.onStart();
+////        updateMovieData();
+//    }
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
@@ -211,6 +212,7 @@ public class MainActivityFragment extends Fragment {
             try{
 
                 String[] moviePosters = new JSONParser().getPosterDataFromJson(movieJsonStr);
+//                Log.v(LOG_TAG, "Movie poster link:" + moviePosters[0]);
 
                 return moviePosters;
             }
