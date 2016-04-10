@@ -55,8 +55,15 @@ public class DetailActivityFragment extends Fragment {
         if(savedInstanceState == null || !savedInstanceState.containsKey("reviews") || !savedInstanceState.containsKey("trailerLinks")) {
             sReviews = new ArrayList<String>();
             sTrailers = new String[0];
-            new FetchTrailerTask().execute(mMovieDetail.get(5));
-            new FetchReviewTask().execute(mMovieDetail.get(5));
+//            new FetchTrailerTask().execute(mMovieDetail.get(5));
+//            new FetchReviewTask().execute(mMovieDetail.get(5));
+            FetchTask fetchTrailerTask = new FetchTask();
+            fetchTrailerTask.setFetch("TRAILERS");
+            fetchTrailerTask.execute(mMovieDetail.get(5));
+            FetchTask fetchReviewTask = new FetchTask();
+            fetchReviewTask.setFetch("REVIEWS");
+            fetchReviewTask.execute(mMovieDetail.get(5));
+
         }
         else {
             sReviews = savedInstanceState.getStringArrayList("reviews");

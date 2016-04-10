@@ -35,6 +35,7 @@ public class MainActivityFragment extends Fragment {
     public MainActivityFragment() {
     }
 
+    public final String LOG_TAG_FRAGMENT = MainActivityFragment.class.getSimpleName();
     ImageAdapter mImageAdapter;
     String[] mPosterLinks;
     // String to contain the raw JSON response as a string.
@@ -44,6 +45,8 @@ public class MainActivityFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        Log.v(LOG_TAG_FRAGMENT, "onCreate of MainActivityFragment");
         //Add this line in order for this fragment to handle menu events.
         setHasOptionsMenu(true);
 
@@ -90,11 +93,12 @@ public class MainActivityFragment extends Fragment {
         return super.onOptionsItemSelected(item);
     }
 
-//    @Override
-//    public void onStart() {
-//        super.onStart();
-////        updateMovieData();
-//    }
+    @Override
+    public void onStart() {
+        super.onStart();
+        Log.v(LOG_TAG_FRAGMENT, "onStart of MainActivityFragment");
+//        updateMovieData();
+    }
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
@@ -108,6 +112,8 @@ public class MainActivityFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_main, container, false);
+
+        Log.v(LOG_TAG_FRAGMENT, "onCreateView of MainActivityFragment");
 
         mImageAdapter = new ImageAdapter(getActivity(), mPosterLinks);
         GridView gridView = (GridView)rootView.findViewById(R.id.grid_view);
