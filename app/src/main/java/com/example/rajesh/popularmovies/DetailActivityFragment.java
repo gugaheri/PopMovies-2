@@ -17,9 +17,11 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.GridView;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.squareup.picasso.Picasso;
 
@@ -38,6 +40,7 @@ public class DetailActivityFragment extends Fragment {
     private ArrayList<String> mMovieDetail  = new ArrayList<String>();
     private final String VOTE_MAX = "/10";
     private ShareActionProvider mShareActionProvider;
+    private boolean mIsFavorite = false;
 
 //    private String[] mReviews = {""};
 //    private ArrayAdapter<String> mReviewAdapter;
@@ -185,6 +188,31 @@ public class DetailActivityFragment extends Fragment {
                 }
             }
         });
+
+        final ImageButton favButton = (ImageButton) rootView.findViewById(R.id.fav_button);
+        if (mIsFavorite){
+            favButton.setImageResource(R.drawable.favorite);
+        }else{
+            favButton.setImageResource(R.drawable.unfavorite);
+        }
+
+        favButton.setOnClickListener(new View.OnClickListener() {
+                                         @Override
+                                         public void onClick(View view) {
+                                             if (mIsFavorite){
+                                                 favButton.setImageResource(R.drawable.unfavorite);
+                                                 mIsFavorite = false;
+                                                 Toast.makeText(getActivity(),
+                                                         "Removed from Favorite", Toast.LENGTH_SHORT).show();
+                                             }else{
+                                                 favButton.setImageResource(R.drawable.favorite);
+                                                 mIsFavorite = true;
+                                                 Toast.makeText(getActivity(),
+                                                         "Marked as Favorite", Toast.LENGTH_SHORT).show();
+                                             }
+                                         }
+                                     }
+        );
 
         // Code to make ListView and GridView scrollable in ScrollView
         gridView.setOnTouchListener(new GridView.OnTouchListener() {

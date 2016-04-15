@@ -49,6 +49,14 @@
             android:paddingLeft="@dimen/padding"
             android:textStyle="bold"/>
 
+        <ImageButton
+            android:layout_width="@dimen/fav_button_size"
+            android:layout_height="@dimen/fav_button_size"
+            android:id="@+id/fav_button"
+            android:layout_toRightOf="@+id/movie_poster"
+            android:layout_below="@+id/vote_average"
+            android:layout_marginLeft="@dimen/padding"/>
+
     </RelativeLayout>
 
     <TextView
