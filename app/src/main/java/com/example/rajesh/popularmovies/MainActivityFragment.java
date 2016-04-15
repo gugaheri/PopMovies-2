@@ -29,7 +29,7 @@ import java.net.URL;
 /**
  * A placeholder fragment containing a simple view for main activity.
  */
-public class MainActivityFragment extends Fragment {
+public class MainActivityFragment extends Fragment{
 
 
     public MainActivityFragment() {
@@ -107,6 +107,7 @@ public class MainActivityFragment extends Fragment {
 
         super.onSaveInstanceState(outState);
     }
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,

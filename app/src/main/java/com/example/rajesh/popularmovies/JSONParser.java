@@ -26,6 +26,7 @@ public class JSONParser {
     final String TRAILER_KEY = "key";
     final String TRAILER_THUMBNAIL = "http://img.youtube.com/vi/";
     final String TRAILER_THUMBNAIL_EXT = "/mqdefault.jpg";
+    final String YOUTUBE_PREFIX = "https://www.youtube.com/watch?v=";
 
     /** Method for getting poster links for Main Activity */
     public String[] getPosterDataFromJson(String movieJsonStr)
@@ -124,5 +125,18 @@ public class JSONParser {
         }
 
         return resultStr;
+    }
+
+    /** Method for generating Youtube Links*/
+    public String getYoutubeUrl(String[] trailers, int position){
+        if (trailers.length>0) {
+            String trailerImageLink = trailers[position];
+            String[] trailerImageLinkArray = trailerImageLink.split("/");
+            final int trailerKeyIndex = trailerImageLinkArray.length - 2;
+            String trailerKey = trailerImageLinkArray[trailerKeyIndex];
+            return YOUTUBE_PREFIX + trailerKey;
+        }else{
+            return YOUTUBE_PREFIX;
+        }
     }
 }

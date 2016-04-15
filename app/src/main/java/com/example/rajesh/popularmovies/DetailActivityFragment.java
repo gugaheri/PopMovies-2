@@ -1,12 +1,20 @@
 package com.example.rajesh.popularmovies;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.view.MenuItemCompat;
+import android.support.v7.widget.ShareActionProvider;
+import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.GridView;
 import android.widget.ImageView;
@@ -23,11 +31,13 @@ import java.util.ArrayList;
 public class DetailActivityFragment extends Fragment {
 
     public DetailActivityFragment() {
+        setHasOptionsMenu(true);
     }
 
     public final String LOG_TAG = DetailActivityFragment.class.getSimpleName();
     private ArrayList<String> mMovieDetail  = new ArrayList<String>();
     private final String VOTE_MAX = "/10";
+    private ShareActionProvider mShareActionProvider;
 
 //    private String[] mReviews = {""};
 //    private ArrayAdapter<String> mReviewAdapter;
@@ -44,6 +54,59 @@ public class DetailActivityFragment extends Fragment {
 
         super.onSaveInstanceState(outState);
     }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        inflater.inflate(R.menu.detail_fragment, menu);
+
+        // Retrieve the share menu item
+        MenuItem menuItem = menu.findItem(R.id.action_share);
+
+        // Get the provider and hold onto it to set/change the share intent.
+        mShareActionProvider = (ShareActionProvider) MenuItemCompat.getActionProvider(menuItem);
+
+        // Attach an intent to this ShareActionProvider.  You can update this at any time,
+        // like when the user selects a new piece of data they might like to share.
+//        if (mShareActionProvider != null ) {
+//            mShareActionProvider.setShareIntent(createShareForecastIntent());
+//        } else {
+//            Log.d(LOG_TAG, "Share Action Provider is null?");
+//        }
+        setShareIntent();
+    }
+
+    private Intent createShareForecastIntent() {
+        Intent shareIntent = new Intent(Intent.ACTION_SEND);
+        shareIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET);
+        shareIntent.setType("text/plain");
+        shareIntent.putExtra(Intent.EXTRA_TEXT,
+                "Check out the trailer for movie " + mMovieDetail.get(0) + " at Youtube link: " + new JSONParser().getYoutubeUrl(sTrailers, 0));
+//        Log.v(LOG_TAG, "Share Intent:" + sTrailers[0]);
+        return shareIntent;
+    }
+
+    // Call to update the share intent
+    private void setShareIntent() {
+        if (mShareActionProvider != null ) {
+            mShareActionProvider.setShareIntent(createShareForecastIntent());
+        } else {
+            Log.d(LOG_TAG, "Share Action Provider is null?");
+        }
+    }
+
+//  Tried for BUG of Share Intent - ShareActionProvider refresh text. But its not fixing the bug
+//    @Override
+//    public boolean onOptionsItemSelected(MenuItem item) {
+//        int id = item.getItemId();
+//        //noinspection SimplifiableIfStatement
+//        if (id == R.id.action_share) {
+//            setShareIntent();
+//            return true;
+//        }
+//        return super.onOptionsItemSelected(item);
+//
+//    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -69,6 +132,10 @@ public class DetailActivityFragment extends Fragment {
             sReviews = savedInstanceState.getStringArrayList("reviews");
             sTrailers = savedInstanceState.getStringArray("trailerLinks");
         }
+        // Updating share intent as Trailers got fetched from background thread
+//        mShareActionProvider.setShareIntent(createShareForecastIntent());
+//        setShareIntent();
+//        mShareActionProvider.setShareIntent(createShareForecastIntent());
 
         View rootView = inflater.inflate(R.layout.fragment_detail, container, false);
 
@@ -102,6 +169,22 @@ public class DetailActivityFragment extends Fragment {
         ListView listView = (ListView) rootView.findViewById(R.id.listview_reviews);
 //        mReviewAdapter.notifyDataSetChanged();
         listView.setAdapter(sReviewAdapter);
+
+        gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                String youtubeUrl = new JSONParser().getYoutubeUrl(sTrailers, position);
+                Uri youtubeUri = Uri.parse(youtubeUrl);
+                Intent intent = new Intent(Intent.ACTION_VIEW, youtubeUri);
+//                Log.v(LOG_TAG, "sTrailers:" + sTrailers[position] );
+//                Log.v(LOG_TAG, "Youtube Url:" + youtubeUrl );
+                if (intent.resolveActivity(getActivity().getPackageManager()) != null) {
+                    startActivity(intent);
+                } else {
+                    Log.d(LOG_TAG, "Couldn't play trailer, no receiving apps installed!");
+                }
+            }
+        });
 
         // Code to make ListView and GridView scrollable in ScrollView
         gridView.setOnTouchListener(new GridView.OnTouchListener() {
