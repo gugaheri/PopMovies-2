@@ -2,6 +2,7 @@ package com.example.rajesh.popularmovies;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.database.Cursor;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -17,6 +18,9 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.GridView;
 
+import com.example.rajesh.popularmovies.data.MovieContract;
+import com.example.rajesh.popularmovies.data.MovieContract.FavMoviesEntry;
+
 import org.json.JSONException;
 
 import java.io.BufferedReader;
@@ -25,6 +29,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.ArrayList;
 
 /**
  * A placeholder fragment containing a simple view for main activity.
@@ -40,7 +45,28 @@ public class MainActivityFragment extends Fragment{
     String[] mPosterLinks;
     // String to contain the raw JSON response as a string.
     public String movieJsonStr;
+    // ArrayList to contain favorite movies info
+    public ArrayList<ArrayList> movieList;
     public final String LOG_TAG = FetchMovieTask.class.getSimpleName();
+
+    // Specify the columns we need.
+    private static final String[] FAV_MOVIES_COLUMNS = {
+            FavMoviesEntry.COLUMN_TITLE,
+            FavMoviesEntry.COLUMN_POSTER_PATH,
+            FavMoviesEntry.COLUMN_RELEASE_DATE,
+            FavMoviesEntry.COLUMN_USER_RATING,
+            FavMoviesEntry.COLUMN_OVERVIEW,
+            FavMoviesEntry.COLUMN_MOVIE_ID
+    };
+    // These indices are tied to FAV_MOVIES_COLUMNS.  If FAV_MOVIES_COLUMNS changes, these
+    // must change.
+    public static final int COL_MOVIE_TITLE = 0;
+    public static final int COL_MOVIE_POSTER_PATH = 1;
+    public static final int COL_MOVIE_RELEASE_DATE = 2;
+    public static final int COL_MOVIE_USER_RATING = 3;
+    public static final int COL_MOVIE_OVERVIEW = 4;
+    public static final int COL_MOVIE_ID = 5;
+
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -51,15 +77,15 @@ public class MainActivityFragment extends Fragment{
         setHasOptionsMenu(true);
 
         //savedInstanceState used to restore data on rotation of phone
-        if(savedInstanceState == null || !savedInstanceState.containsKey("posterLinks")) {
-            mPosterLinks=new String[0];
-            movieJsonStr = null;
-            updateMovieData();
-        }
-        else {
-            mPosterLinks = savedInstanceState.getStringArray("posterLinks");
-            movieJsonStr = savedInstanceState.getString("movieJsonStr");
-        }
+//        if(savedInstanceState == null || !savedInstanceState.containsKey("posterLinks")) {
+//            mPosterLinks=new String[0];
+//            movieJsonStr = null;
+//            updateMovieData();
+//        }
+//        else {
+//            mPosterLinks = savedInstanceState.getStringArray("posterLinks");
+//            movieJsonStr = savedInstanceState.getString("movieJsonStr");
+//        }
 
     }
 
@@ -74,7 +100,12 @@ public class MainActivityFragment extends Fragment{
     private void updateMovieData(){
         SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getActivity());
         String sortBy = sharedPref.getString(getString(R.string.pref_sort), getString(R.string.pref_default));
-        new FetchMovieTask().execute(sortBy);
+
+        if (sortBy.equals(getString(R.string.pref_favorites))){
+            getFavoriteMovies();
+        }else {
+            new FetchMovieTask().execute(sortBy);
+        }
     }
 
     @Override
@@ -100,6 +131,7 @@ public class MainActivityFragment extends Fragment{
 //        updateMovieData();
     }
 
+
     @Override
     public void onSaveInstanceState(Bundle outState) {
         outState.putStringArray("posterLinks", mPosterLinks);
@@ -112,11 +144,27 @@ public class MainActivityFragment extends Fragment{
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.fragment_main, container, false);
+
 
         Log.v(LOG_TAG_FRAGMENT, "onCreateView of MainActivityFragment");
 
-        mImageAdapter = new ImageAdapter(getActivity(), mPosterLinks);
+        //savedInstanceState used to restore data on rotation of phone
+        if(savedInstanceState == null || !savedInstanceState.containsKey("posterLinks")) {
+            mPosterLinks=new String[0];
+            movieJsonStr = null;
+            mImageAdapter = new ImageAdapter(getActivity(), mPosterLinks);
+            updateMovieData();
+        }
+        else {
+            mPosterLinks = savedInstanceState.getStringArray("posterLinks");
+            movieJsonStr = savedInstanceState.getString("movieJsonStr");
+            mImageAdapter = new ImageAdapter(getActivity(), mPosterLinks);
+        }
+
+//        mImageAdapter = new ImageAdapter(getActivity(), mPosterLinks);
+
+        View rootView = inflater.inflate(R.layout.fragment_main, container, false);
+
         GridView gridView = (GridView)rootView.findViewById(R.id.grid_view);
         gridView.setAdapter(mImageAdapter);
 
@@ -129,8 +177,7 @@ public class MainActivityFragment extends Fragment{
                 try {
                     showDetail.putStringArrayListExtra(Intent.EXTRA_TEXT, new JSONParser().getMovieDataFromJson(movieJsonStr, position));
                     startActivity(showDetail);
-                }
-                catch(JSONException e) {
+                } catch (JSONException e) {
                     Log.e(LOG_TAG, "JSON Error", e);
                 }
 
@@ -139,6 +186,32 @@ public class MainActivityFragment extends Fragment{
 
         return rootView;
     }
+
+
+    public void getFavoriteMovies(){
+        Cursor movieCursor = getActivity().getContentResolver().query(
+                MovieContract.FavMoviesEntry.CONTENT_URI,
+                new String[]{MovieContract.FavMoviesEntry.COLUMN_POSTER_PATH},
+                null,
+                null,
+                null
+        );
+
+//        String[] posterLink = new String[movieCursor.getCount()];
+        Log.v(LOG_TAG, "No. of Favorite Movies: " + movieCursor.getCount());
+        ArrayList<String> posterLink = new ArrayList<String>();
+
+        while (movieCursor.moveToNext()){
+            Log.v(LOG_TAG, "Poster Link from DB: " + movieCursor.getString(0));
+            posterLink.add(movieCursor.getString(0));
+        }
+
+        mPosterLinks = posterLink.toArray(new String[posterLink.size()]);
+        mImageAdapter.updateData(mPosterLinks);
+
+        movieCursor.close();
+    }
+
 
     /** Background Thread for getting Movie Details through the network call to an API */
     public class FetchMovieTask extends AsyncTask<String, Void, String[]>{

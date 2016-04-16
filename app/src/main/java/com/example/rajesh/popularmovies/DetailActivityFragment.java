@@ -1,6 +1,8 @@
 package com.example.rajesh.popularmovies;
 
+import android.content.ContentValues;
 import android.content.Intent;
+import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -23,6 +25,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.rajesh.popularmovies.data.MovieContract.FavMoviesEntry;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
@@ -40,7 +43,10 @@ public class DetailActivityFragment extends Fragment {
     private ArrayList<String> mMovieDetail  = new ArrayList<String>();
     private final String VOTE_MAX = "/10";
     private ShareActionProvider mShareActionProvider;
-    private boolean mIsFavorite = false;
+    private boolean mIsFavorite;// = false;
+    private Cursor mMovieCursor;
+    private Uri mInsertedMovie;
+    private int mDeletedRows;
 
 //    private String[] mReviews = {""};
 //    private ArrayAdapter<String> mReviewAdapter;
@@ -190,6 +196,23 @@ public class DetailActivityFragment extends Fragment {
         });
 
         final ImageButton favButton = (ImageButton) rootView.findViewById(R.id.fav_button);
+
+        mMovieCursor = getActivity().getContentResolver().query(
+                FavMoviesEntry.buildMovieUri(mMovieDetail.get(5)),
+                new String[]{FavMoviesEntry.COLUMN_MOVIE_ID},
+                null,
+                null,
+                null
+        );
+
+        Log.v(LOG_TAG, "Movie already in DB: " + mMovieCursor.getCount());
+
+        if (mMovieCursor.getCount() > 0){
+            mIsFavorite = true;
+        }else{
+            mIsFavorite = false;
+        }
+
         if (mIsFavorite){
             favButton.setImageResource(R.drawable.favorite);
         }else{
@@ -201,11 +224,33 @@ public class DetailActivityFragment extends Fragment {
                                          public void onClick(View view) {
                                              if (mIsFavorite){
                                                  favButton.setImageResource(R.drawable.unfavorite);
+
+                                                 mDeletedRows = getActivity().getContentResolver().delete(
+                                                         FavMoviesEntry.CONTENT_URI,
+                                                         FavMoviesEntry.COLUMN_MOVIE_ID + " = ?",
+                                                         new String[]{ mMovieDetail.get(5)}
+                                                 );
+                                                 Log.v(LOG_TAG, "No. of Movie deleted: " + mDeletedRows);
+
                                                  mIsFavorite = false;
                                                  Toast.makeText(getActivity(),
                                                          "Removed from Favorite", Toast.LENGTH_SHORT).show();
                                              }else{
                                                  favButton.setImageResource(R.drawable.favorite);
+
+                                                 ContentValues contentValues = new ContentValues();
+                                                 contentValues.put(FavMoviesEntry.COLUMN_MOVIE_ID,mMovieDetail.get(5));
+                                                 contentValues.put(FavMoviesEntry.COLUMN_TITLE, mMovieDetail.get(0));
+                                                 contentValues.put(FavMoviesEntry.COLUMN_POSTER_PATH,mMovieDetail.get(1));
+                                                 contentValues.put(FavMoviesEntry.COLUMN_RELEASE_DATE,mMovieDetail.get(2));
+                                                 contentValues.put(FavMoviesEntry.COLUMN_USER_RATING,mMovieDetail.get(3));
+                                                 contentValues.put(FavMoviesEntry.COLUMN_OVERVIEW,mMovieDetail.get(4));
+                                                 mInsertedMovie = getActivity().getContentResolver().insert(
+                                                         FavMoviesEntry.CONTENT_URI,
+                                                         contentValues
+                                                 );
+                                                 Log.v(LOG_TAG, "Inserted Movie Uri: " + mInsertedMovie);
+
                                                  mIsFavorite = true;
                                                  Toast.makeText(getActivity(),
                                                          "Marked as Favorite", Toast.LENGTH_SHORT).show();
@@ -260,6 +305,13 @@ public class DetailActivityFragment extends Fragment {
 
 
         return rootView;
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        Log.v(LOG_TAG, "onDestroy");
+        mMovieCursor.close();
     }
 
 //    @Override

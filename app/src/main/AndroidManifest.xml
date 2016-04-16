@@ -21,6 +21,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
         <activity
             android:name=".DetailActivity"
             android:label="@string/title_activity_detail"
@@ -30,15 +31,20 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.example.rajesh.popularmovies.MainActivity" />
         </activity>
+
         <activity
             android:name=".SettingsActivity"
             android:label="@string/title_activity_settings"
             android:parentActivityName=".MainActivity"
-            android:theme="@style/AppTheme.NoActionBar">
+            android:theme="@style/SettingsTheme">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.example.rajesh.popularmovies.MainActivity" />
         </activity>
+
+        <provider
+            android:authorities="com.example.rajesh.popularmovies"
+            android:name=".data.MovieProvider"/>
     </application>
 
 </manifest>

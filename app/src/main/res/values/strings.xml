@@ -15,15 +15,18 @@
 
     <string name="pref_popularity">popular</string>
     <string name="pref_highest_rated">top_rated</string>
+    <string name="pref_favorites">favorites</string>
 
     <string-array name="pref_sort_by">
         <item>Popularity</item>
         <item>Highest Rated</item>
+        <item>Favorites</item>
     </string-array>
 
     <string-array name="pref_sort_values">
         <item>@string/pref_popularity</item>
         <item>@string/pref_highest_rated</item>
+        <item>@string/pref_favorites</item>
     </string-array>
 
     <!-- Trailera and Reviews related strings-->
