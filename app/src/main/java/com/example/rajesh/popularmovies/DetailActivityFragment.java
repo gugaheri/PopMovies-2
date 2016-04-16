@@ -3,6 +3,8 @@ package com.example.rajesh.popularmovies;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -27,7 +29,9 @@ import android.widget.Toast;
 
 import com.example.rajesh.popularmovies.data.MovieContract.FavMoviesEntry;
 import com.squareup.picasso.Picasso;
+import com.squareup.picasso.Target;
 
+import java.io.FileOutputStream;
 import java.util.ArrayList;
 
 /**
@@ -231,17 +235,61 @@ public class DetailActivityFragment extends Fragment {
                                                          new String[]{ mMovieDetail.get(5)}
                                                  );
                                                  Log.v(LOG_TAG, "No. of Movie deleted: " + mDeletedRows);
+                                                 // Delete the saved poster image from internal storage
+                                                 getActivity().deleteFile(mMovieDetail.get(5) + ".jpg");
+
+//                                                 Log.v(LOG_TAG, "Poster file deleted: " + getActivity().deleteFile(mMovieDetail.get(5) + ".jpg"));
 
                                                  mIsFavorite = false;
                                                  Toast.makeText(getActivity(),
                                                          "Removed from Favorite", Toast.LENGTH_SHORT).show();
+
                                              }else{
                                                  favButton.setImageResource(R.drawable.favorite);
+
+                                                 // Target to save the poster image on internal storage
+//                                                 final String posterPath = "file://" + getActivity().getFilesDir() + "/" + mMovieDetail.get(5) + ".jpg";
+                                                 final String posterPath = getActivity().getFilesDir() + "/" + mMovieDetail.get(5) + ".jpg";
+                                                 Log.v(LOG_TAG, "Local Dir poster path: " + posterPath);
+
+                                                 Target target = new Target() {
+                                                     @Override
+                                                     public void onBitmapLoaded(final Bitmap bitmap, Picasso.LoadedFrom from) {
+                                                         new Thread(new Runnable() {
+                                                             @Override
+                                                             public void run() {
+//                                                                 File file = new File(Environment.getExternalStorageDirectory().getPath() + "/image1.jpg");
+                                                                 try {
+//                                                                     file.createNewFile();
+                                                                     FileOutputStream outStream = new FileOutputStream(posterPath);
+                                                                     bitmap.compress(Bitmap.CompressFormat.JPEG, 100, outStream);
+                                                                     outStream.close();
+                                                                 } catch (Exception e) {
+                                                                     e.printStackTrace();
+                                                                 }
+                                                             }
+                                                         }).start();
+                                                     }
+
+                                                     @Override
+                                                     public void onBitmapFailed(Drawable errorDrawable) {}
+
+                                                     @Override
+                                                     public void onPrepareLoad(Drawable placeHolderDrawable) {
+                                                         if (placeHolderDrawable != null) {}
+                                                     }
+                                                 };
+
+                                                 Picasso.with(getActivity())
+                                                         .load(mMovieDetail.get(1))
+                                                         .into(target);
+
 
                                                  ContentValues contentValues = new ContentValues();
                                                  contentValues.put(FavMoviesEntry.COLUMN_MOVIE_ID,mMovieDetail.get(5));
                                                  contentValues.put(FavMoviesEntry.COLUMN_TITLE, mMovieDetail.get(0));
-                                                 contentValues.put(FavMoviesEntry.COLUMN_POSTER_PATH,mMovieDetail.get(1));
+//                                                 contentValues.put(FavMoviesEntry.COLUMN_POSTER_PATH,mMovieDetail.get(1));
+                                                 contentValues.put(FavMoviesEntry.COLUMN_POSTER_PATH, "file://" + posterPath);
                                                  contentValues.put(FavMoviesEntry.COLUMN_RELEASE_DATE,mMovieDetail.get(2));
                                                  contentValues.put(FavMoviesEntry.COLUMN_USER_RATING,mMovieDetail.get(3));
                                                  contentValues.put(FavMoviesEntry.COLUMN_OVERVIEW,mMovieDetail.get(4));
@@ -302,7 +350,6 @@ public class DetailActivityFragment extends Fragment {
                 return true;
             }
         });
-
 
 
         return rootView;
