@@ -45,8 +45,10 @@ public class MainActivityFragment extends Fragment{
     String[] mPosterLinks;
     // String to contain the raw JSON response as a string.
     public String movieJsonStr;
-    // ArrayList to contain favorite movies info
-    public ArrayList<ArrayList> movieList;
+    // ArrayList to contain favorite movies info as an ArrayList
+    public ArrayList<ArrayList<String>> movieList = new ArrayList<ArrayList<String>>();
+
+
     public final String LOG_TAG = FetchMovieTask.class.getSimpleName();
 
     // Specify the columns we need.
@@ -175,7 +177,14 @@ public class MainActivityFragment extends Fragment{
                 //Toast.makeText(getActivity(), mImageAdapter.getItem(position).toString(), Toast.LENGTH_SHORT).show();
                 Intent showDetail = new Intent(getActivity(), DetailActivity.class);
                 try {
-                    showDetail.putStringArrayListExtra(Intent.EXTRA_TEXT, new JSONParser().getMovieDataFromJson(movieJsonStr, position));
+                    SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getActivity());
+                    String sortBy = sharedPref.getString(getString(R.string.pref_sort), getString(R.string.pref_default));
+                    if (sortBy.equals(getString(R.string.pref_favorites))){
+                        showDetail.putStringArrayListExtra(Intent.EXTRA_TEXT, movieList.get(position));
+                    }else {
+                        showDetail.putStringArrayListExtra(Intent.EXTRA_TEXT, new JSONParser().getMovieDataFromJson(movieJsonStr, position));
+                    }
+
                     startActivity(showDetail);
                 } catch (JSONException e) {
                     Log.e(LOG_TAG, "JSON Error", e);
@@ -191,7 +200,7 @@ public class MainActivityFragment extends Fragment{
     public void getFavoriteMovies(){
         Cursor movieCursor = getActivity().getContentResolver().query(
                 MovieContract.FavMoviesEntry.CONTENT_URI,
-                new String[]{MovieContract.FavMoviesEntry.COLUMN_POSTER_PATH},
+                FAV_MOVIES_COLUMNS,
                 null,
                 null,
                 null
@@ -201,10 +210,29 @@ public class MainActivityFragment extends Fragment{
         Log.v(LOG_TAG, "No. of Favorite Movies: " + movieCursor.getCount());
         ArrayList<String> posterLink = new ArrayList<String>();
 
+
         while (movieCursor.moveToNext()){
-            Log.v(LOG_TAG, "Poster Link from DB: " + movieCursor.getString(0));
-            posterLink.add(movieCursor.getString(0));
+            Log.v(LOG_TAG, "Movie Title from DB: " + movieCursor.getString(COL_MOVIE_TITLE));
+            Log.v(LOG_TAG, "Poster Link from DB: " + movieCursor.getString(COL_MOVIE_POSTER_PATH));
+
+            posterLink.add(movieCursor.getString(COL_MOVIE_POSTER_PATH));
+
+            ArrayList<String> movieInfo = new ArrayList<String>();
+
+            movieInfo.add(movieCursor.getString(COL_MOVIE_TITLE));
+            movieInfo.add(movieCursor.getString(COL_MOVIE_POSTER_PATH));
+            movieInfo.add(movieCursor.getString(COL_MOVIE_RELEASE_DATE));
+            movieInfo.add(movieCursor.getString(COL_MOVIE_USER_RATING));
+            movieInfo.add(movieCursor.getString(COL_MOVIE_OVERVIEW));
+            movieInfo.add(String.valueOf(movieCursor.getInt(COL_MOVIE_ID)));
+
+//            for (String i:movieInfo){
+//                Log.v(LOG_TAG, "movieInfo: " + i );
+//            }
+
+            movieList.add(movieInfo);
         }
+
 
         mPosterLinks = posterLink.toArray(new String[posterLink.size()]);
         mImageAdapter.updateData(mPosterLinks);

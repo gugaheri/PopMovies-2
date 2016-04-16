@@ -245,6 +245,7 @@ public class DetailActivityFragment extends Fragment {
                                                  contentValues.put(FavMoviesEntry.COLUMN_RELEASE_DATE,mMovieDetail.get(2));
                                                  contentValues.put(FavMoviesEntry.COLUMN_USER_RATING,mMovieDetail.get(3));
                                                  contentValues.put(FavMoviesEntry.COLUMN_OVERVIEW,mMovieDetail.get(4));
+
                                                  mInsertedMovie = getActivity().getContentResolver().insert(
                                                          FavMoviesEntry.CONTENT_URI,
                                                          contentValues
