@@ -17,6 +17,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.GridView;
+import android.widget.Toast;
 
 import com.example.rajesh.popularmovies.data.MovieContract;
 import com.example.rajesh.popularmovies.data.MovieContract.FavMoviesEntry;
@@ -106,7 +107,11 @@ public class MainActivityFragment extends Fragment{
         if (sortBy.equals(getString(R.string.pref_favorites))){
             getFavoriteMovies();
         }else {
-            new FetchMovieTask().execute(sortBy);
+            if(Utility.isNetworkAvailable(getContext())) {
+                new FetchMovieTask().execute(sortBy);
+            } else {
+                Toast.makeText(getActivity(), "No Network Access!", Toast.LENGTH_SHORT).show();
+            }
         }
     }
 

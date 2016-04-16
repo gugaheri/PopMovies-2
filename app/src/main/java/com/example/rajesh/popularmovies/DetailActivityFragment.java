@@ -133,12 +133,17 @@ public class DetailActivityFragment extends Fragment {
             sTrailers = new String[0];
 //            new FetchTrailerTask().execute(mMovieDetail.get(5));
 //            new FetchReviewTask().execute(mMovieDetail.get(5));
-            FetchTask fetchTrailerTask = new FetchTask();
-            fetchTrailerTask.setFetch("TRAILERS");
-            fetchTrailerTask.execute(mMovieDetail.get(5));
-            FetchTask fetchReviewTask = new FetchTask();
-            fetchReviewTask.setFetch("REVIEWS");
-            fetchReviewTask.execute(mMovieDetail.get(5));
+
+            if(Utility.isNetworkAvailable(getContext())) {
+                FetchTask fetchTrailerTask = new FetchTask();
+                fetchTrailerTask.setFetch("TRAILERS");
+                fetchTrailerTask.execute(mMovieDetail.get(5));
+                FetchTask fetchReviewTask = new FetchTask();
+                fetchReviewTask.setFetch("REVIEWS");
+                fetchReviewTask.execute(mMovieDetail.get(5));
+            } else {
+                Toast.makeText(getActivity(), "No Network Access!", Toast.LENGTH_SHORT).show();
+            }
 
         }
         else {
