@@ -144,6 +144,7 @@ public class MainActivityFragment extends Fragment{
         outState.putStringArray("posterLinks", mPosterLinks);
         outState.putString("movieJsonStr", movieJsonStr);
 
+
         super.onSaveInstanceState(outState);
     }
 
@@ -166,6 +167,8 @@ public class MainActivityFragment extends Fragment{
             mPosterLinks = savedInstanceState.getStringArray("posterLinks");
             movieJsonStr = savedInstanceState.getString("movieJsonStr");
             mImageAdapter = new ImageAdapter(getActivity(), mPosterLinks);
+            // To get Favorite Movie Details in case of rotation of device
+            getFavoriteMovies();
         }
 
 //        mImageAdapter = new ImageAdapter(getActivity(), mPosterLinks);
@@ -237,7 +240,6 @@ public class MainActivityFragment extends Fragment{
 
             movieList.add(movieInfo);
         }
-
 
         mPosterLinks = posterLink.toArray(new String[posterLink.size()]);
         mImageAdapter.updateData(mPosterLinks);

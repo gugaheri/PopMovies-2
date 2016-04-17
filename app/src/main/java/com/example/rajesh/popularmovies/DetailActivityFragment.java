@@ -240,8 +240,10 @@ public class DetailActivityFragment extends Fragment {
                                                          new String[]{ mMovieDetail.get(5)}
                                                  );
                                                  Log.v(LOG_TAG, "No. of Movie deleted: " + mDeletedRows);
+                                                 // Deleting the saved poster from internal storage has been commented out
+                                                 // so that setting/unsetting favorite can work offline in Detail Activity for Favorite Movie
                                                  // Delete the saved poster image from internal storage
-                                                 getActivity().deleteFile(mMovieDetail.get(5) + ".jpg");
+                                                 //getActivity().deleteFile(mMovieDetail.get(5) + ".jpg");
 
 //                                                 Log.v(LOG_TAG, "Poster file deleted: " + getActivity().deleteFile(mMovieDetail.get(5) + ".jpg"));
 
