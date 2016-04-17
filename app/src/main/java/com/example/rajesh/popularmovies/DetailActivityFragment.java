@@ -157,6 +157,9 @@ public class DetailActivityFragment extends Fragment {
 
         View rootView = inflater.inflate(R.layout.fragment_detail, container, false);
 
+        ImageView movieBackdrop = (ImageView)rootView.findViewById(R.id.movie_backdrop);
+        Picasso.with(getActivity()).load("http://image.tmdb.org/t/p/w500/n1y094tVDFATSzkTnFxoGZ1qNsG.jpg").fit().placeholder(R.drawable.no_image_available).into(movieBackdrop);
+
         TextView movieTitle = (TextView)rootView.findViewById(R.id.movie_title);
         movieTitle.setText(mMovieDetail.get(0));
 

@@ -12,32 +12,56 @@
     android:layout_height="wrap_content"
     android:orientation="vertical" >
 
-    <TextView
-        android:id="@+id/movie_title"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="left"
-        android:background="@color/title_background"
-        android:textSize="@dimen/title_size"
-        android:textColor="@color/fragment_background"
-        android:padding="@dimen/padding"/>
+    <!--<TextView-->
+        <!--android:id="@+id/movie_title"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:gravity="left"-->
+        <!--android:background="@color/title_background"-->
+        <!--android:textSize="@dimen/title_size"-->
+        <!--android:textColor="@color/fragment_background"-->
+        <!--android:padding="@dimen/padding"/>-->
+
+    <!--<ImageView-->
+        <!--android:id="@+id/movie_backdrop"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="wrap_content"/>-->
 
     <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:padding="@dimen/padding">
+        android:layout_height="wrap_content">
+        <!--android:padding="@dimen/padding">-->
+
+
+        <ImageView
+            android:id="@+id/movie_backdrop"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/movie_backdrop_height"/>
 
         <ImageView
             android:id="@+id/movie_poster"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
+            android:layout_height="wrap_content"
+            android:paddingLeft="@dimen/padding"
+            android:layout_marginTop="@dimen/movie_poster_marginTop"/>
+
+        <TextView
+            android:id="@+id/movie_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textStyle="bold"
+            android:layout_toRightOf="@+id/movie_poster"
+            android:layout_below="@+id/movie_backdrop"
+            android:textSize="@dimen/title_size"
+            android:padding="@dimen/padding"/>
 
         <TextView
             android:id="@+id/release_date"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_toRightOf="@+id/movie_poster"
+            android:layout_below="@+id/movie_title"
             android:paddingLeft="@dimen/padding"
             android:textStyle="bold"/>
 
@@ -64,7 +88,8 @@
         android:id="@+id/movie_overview"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingLeft="@dimen/padding" />
+        android:paddingLeft="@dimen/padding"
+        android:paddingTop="@dimen/padding"/>
 
     <TextView
         android:id="@+id/line"

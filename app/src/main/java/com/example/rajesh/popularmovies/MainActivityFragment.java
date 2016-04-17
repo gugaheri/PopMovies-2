@@ -168,7 +168,11 @@ public class MainActivityFragment extends Fragment{
             movieJsonStr = savedInstanceState.getString("movieJsonStr");
             mImageAdapter = new ImageAdapter(getActivity(), mPosterLinks);
             // To get Favorite Movie Details in case of rotation of device
-            getFavoriteMovies();
+            SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getActivity());
+            String sortBy = sharedPref.getString(getString(R.string.pref_sort), getString(R.string.pref_default));
+            if (sortBy.equals(getString(R.string.pref_favorites))) {
+                getFavoriteMovies();
+            }
         }
 
 //        mImageAdapter = new ImageAdapter(getActivity(), mPosterLinks);
