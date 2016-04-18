@@ -158,7 +158,7 @@ public class DetailActivityFragment extends Fragment {
         View rootView = inflater.inflate(R.layout.fragment_detail, container, false);
 
         ImageView movieBackdrop = (ImageView)rootView.findViewById(R.id.movie_backdrop);
-        Picasso.with(getActivity()).load("http://image.tmdb.org/t/p/w500/n1y094tVDFATSzkTnFxoGZ1qNsG.jpg").fit().placeholder(R.drawable.no_image_available).into(movieBackdrop);
+        Picasso.with(getActivity()).load(mMovieDetail.get(6)).fit().placeholder(R.drawable.no_image_available).into(movieBackdrop);
 
         TextView movieTitle = (TextView)rootView.findViewById(R.id.movie_title);
         movieTitle.setText(mMovieDetail.get(0));
@@ -246,7 +246,8 @@ public class DetailActivityFragment extends Fragment {
                                                  // Deleting the saved poster from internal storage has been commented out
                                                  // so that setting/unsetting favorite can work offline in Detail Activity for Favorite Movie
                                                  // Delete the saved poster image from internal storage
-                                                 //getActivity().deleteFile(mMovieDetail.get(5) + ".jpg");
+                                                 //getActivity().deleteFile(mMovieDetail.get(5) + "_poster.jpg");
+//                                                 getActivity().deleteFile(mMovieDetail.get(5) + "_backdrop.jpg");
 
 //                                                 Log.v(LOG_TAG, "Poster file deleted: " + getActivity().deleteFile(mMovieDetail.get(5) + ".jpg"));
 
@@ -259,8 +260,12 @@ public class DetailActivityFragment extends Fragment {
 
                                                  // Target to save the poster image on internal storage
 //                                                 final String posterPath = "file://" + getActivity().getFilesDir() + "/" + mMovieDetail.get(5) + ".jpg";
-                                                 final String posterPath = getActivity().getFilesDir() + "/" + mMovieDetail.get(5) + ".jpg";
+//                                                 final String posterPath = getActivity().getFilesDir() + "/" + mMovieDetail.get(5) + ".jpg";
+//                                                 final String backdropPath = getActivity().getFilesDir() + "/" + mMovieDetail.get(5) + "_backdrop.jpg";
+                                                 final String posterPath = getActivity().getExternalFilesDir(null) + "/" + mMovieDetail.get(5) + "_poster.jpg";
+                                                 final String backdropPath = getActivity().getExternalFilesDir(null) + "/" + mMovieDetail.get(5) + "_backdrop.jpg";
                                                  Log.v(LOG_TAG, "Local Dir poster path: " + posterPath);
+                                                 Log.v(LOG_TAG, "Local Dir backdrop path: " + backdropPath);
 
                                                  Target target = new Target() {
                                                      @Override
@@ -290,9 +295,54 @@ public class DetailActivityFragment extends Fragment {
                                                      }
                                                  };
 
+                                                 Target target1 = new Target() {
+                                                     @Override
+                                                     public void onBitmapLoaded(final Bitmap bitmap, Picasso.LoadedFrom from) {
+                                                         new Thread(new Runnable() {
+                                                             @Override
+                                                             public void run() {
+//                                                                 File file = new File(Environment.getExternalStorageDirectory().getPath() + "/image1.jpg");
+                                                                 try {
+//                                                                     file.createNewFile();
+                                                                     FileOutputStream outStream1 = new FileOutputStream(backdropPath);
+                                                                     bitmap.compress(Bitmap.CompressFormat.JPEG, 100, outStream1);
+                                                                     outStream1.close();
+                                                                 } catch (Exception e) {
+                                                                     e.printStackTrace();
+                                                                 }
+                                                             }
+                                                         }).start();
+                                                     }
+
+                                                     @Override
+                                                     public void onBitmapFailed(Drawable errorDrawable) {}
+
+                                                     @Override
+                                                     public void onPrepareLoad(Drawable placeHolderDrawable) {
+                                                         if (placeHolderDrawable != null) {}
+                                                     }
+                                                 };
+
+//                                                 final String[] IMAGE_PATH = new String[]{mMovieDetail.get(1), mMovieDetail.get(6)};
+//                                                 final String[] IMAGE_TARGET = new String[]{posterPath, backdropPath};
+//
+//                                                 for (int i = 0; i<IMAGE_PATH.length; i++){
+//                                                     Picasso.with(getActivity())
+//                                                         .load(IMAGE_PATH[i])
+//                                                         .into(Utility.setTarget(IMAGE_TARGET[i]));
+//                                                 }
+
                                                  Picasso.with(getActivity())
                                                          .load(mMovieDetail.get(1))
-                                                         .into(target);
+                                                         .into(Utility.setTarget(posterPath));
+//                                                         .into(target);
+
+
+                                                 Picasso.with(getActivity())
+                                                         .load(mMovieDetail.get(6))
+                                                         .into(Utility.setTarget1(backdropPath));
+//                                                         .into(target1);
+
 
 
                                                  ContentValues contentValues = new ContentValues();
@@ -300,6 +350,7 @@ public class DetailActivityFragment extends Fragment {
                                                  contentValues.put(FavMoviesEntry.COLUMN_TITLE, mMovieDetail.get(0));
 //                                                 contentValues.put(FavMoviesEntry.COLUMN_POSTER_PATH,mMovieDetail.get(1));
                                                  contentValues.put(FavMoviesEntry.COLUMN_POSTER_PATH, "file://" + posterPath);
+                                                 contentValues.put(FavMoviesEntry.COLUMN_BACKDROP_PATH, "file://" + backdropPath);
                                                  contentValues.put(FavMoviesEntry.COLUMN_RELEASE_DATE,mMovieDetail.get(2));
                                                  contentValues.put(FavMoviesEntry.COLUMN_USER_RATING,mMovieDetail.get(3));
                                                  contentValues.put(FavMoviesEntry.COLUMN_OVERVIEW,mMovieDetail.get(4));

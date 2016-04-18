@@ -10,8 +10,9 @@ import com.example.rajesh.popularmovies.data.MovieContract.FavMoviesEntry;
 public class MovieDbHelper extends SQLiteOpenHelper {
 
     // If you change the database schema, you must increment the database version.
-    private static final int DATABASE_VERSION = 1;
-
+//    private static final int DATABASE_VERSION = 1;
+    // Backdrop Path stored in DB for VERSION 2
+    private static final int DATABASE_VERSION = 2;
     static final String DATABASE_NAME = "fav_movies.db";
 
     public MovieDbHelper(Context context) {
@@ -25,7 +26,8 @@ public class MovieDbHelper extends SQLiteOpenHelper {
                 FavMoviesEntry._ID + " INTEGER PRIMARY KEY," +
                 FavMoviesEntry.COLUMN_MOVIE_ID + " INTEGER UNIQUE NOT NULL, " +
                 FavMoviesEntry.COLUMN_TITLE + " TEXT NOT NULL, " +
-                FavMoviesEntry.COLUMN_POSTER_PATH + " TEXT , " +
+                FavMoviesEntry.COLUMN_POSTER_PATH + " TEXT, " +
+                FavMoviesEntry.COLUMN_BACKDROP_PATH + " TEXT, " +
                 FavMoviesEntry.COLUMN_OVERVIEW + " TEXT, " +
                 FavMoviesEntry.COLUMN_USER_RATING + " TEXT, " +
                 FavMoviesEntry.COLUMN_RELEASE_DATE + " TEXT " +

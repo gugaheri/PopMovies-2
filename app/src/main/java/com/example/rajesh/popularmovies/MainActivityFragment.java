@@ -59,7 +59,8 @@ public class MainActivityFragment extends Fragment{
             FavMoviesEntry.COLUMN_RELEASE_DATE,
             FavMoviesEntry.COLUMN_USER_RATING,
             FavMoviesEntry.COLUMN_OVERVIEW,
-            FavMoviesEntry.COLUMN_MOVIE_ID
+            FavMoviesEntry.COLUMN_MOVIE_ID,
+            FavMoviesEntry.COLUMN_BACKDROP_PATH
     };
     // These indices are tied to FAV_MOVIES_COLUMNS.  If FAV_MOVIES_COLUMNS changes, these
     // must change.
@@ -69,6 +70,7 @@ public class MainActivityFragment extends Fragment{
     public static final int COL_MOVIE_USER_RATING = 3;
     public static final int COL_MOVIE_OVERVIEW = 4;
     public static final int COL_MOVIE_ID = 5;
+    public static final int COL_MOVIE_BACKDROP_PATH = 6;
 
 
     @Override
@@ -226,6 +228,7 @@ public class MainActivityFragment extends Fragment{
         while (movieCursor.moveToNext()){
             Log.v(LOG_TAG, "Movie Title from DB: " + movieCursor.getString(COL_MOVIE_TITLE));
             Log.v(LOG_TAG, "Poster Link from DB: " + movieCursor.getString(COL_MOVIE_POSTER_PATH));
+            Log.v(LOG_TAG, "Backdrop Link from DB: " + movieCursor.getString(COL_MOVIE_BACKDROP_PATH));
 
             posterLink.add(movieCursor.getString(COL_MOVIE_POSTER_PATH));
 
@@ -237,6 +240,7 @@ public class MainActivityFragment extends Fragment{
             movieInfo.add(movieCursor.getString(COL_MOVIE_USER_RATING));
             movieInfo.add(movieCursor.getString(COL_MOVIE_OVERVIEW));
             movieInfo.add(String.valueOf(movieCursor.getInt(COL_MOVIE_ID)));
+            movieInfo.add(movieCursor.getString(COL_MOVIE_BACKDROP_PATH));
 
 //            for (String i:movieInfo){
 //                Log.v(LOG_TAG, "movieInfo: " + i );
