@@ -3,8 +3,6 @@ package com.example.rajesh.popularmovies;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.database.Cursor;
-import android.graphics.Bitmap;
-import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -29,9 +27,7 @@ import android.widget.Toast;
 
 import com.example.rajesh.popularmovies.data.MovieContract.FavMoviesEntry;
 import com.squareup.picasso.Picasso;
-import com.squareup.picasso.Target;
 
-import java.io.FileOutputStream;
 import java.util.ArrayList;
 
 /**
@@ -243,7 +239,7 @@ public class DetailActivityFragment extends Fragment {
                                                          new String[]{ mMovieDetail.get(5)}
                                                  );
                                                  Log.v(LOG_TAG, "No. of Movie deleted: " + mDeletedRows);
-                                                 // Deleting the saved poster from internal storage has been commented out
+                                                 // Deleting the saved poster from device storage has been commented out
                                                  // so that setting/unsetting favorite can work offline in Detail Activity for Favorite Movie
                                                  // Delete the saved poster image from internal storage
                                                  //getActivity().deleteFile(mMovieDetail.get(5) + "_poster.jpg");
@@ -258,92 +254,24 @@ public class DetailActivityFragment extends Fragment {
                                              }else{
                                                  favButton.setImageResource(R.drawable.favorite);
 
-                                                 // Target to save the poster image on internal storage
+                                                 // Target to save the poster image on device storage
 //                                                 final String posterPath = "file://" + getActivity().getFilesDir() + "/" + mMovieDetail.get(5) + ".jpg";
-//                                                 final String posterPath = getActivity().getFilesDir() + "/" + mMovieDetail.get(5) + ".jpg";
+//                                                 final String posterPath = getActivity().getFilesDir() + "/" + mMovieDetail.get(5) + "_poster.jpg";
 //                                                 final String backdropPath = getActivity().getFilesDir() + "/" + mMovieDetail.get(5) + "_backdrop.jpg";
                                                  final String posterPath = getActivity().getExternalFilesDir(null) + "/" + mMovieDetail.get(5) + "_poster.jpg";
                                                  final String backdropPath = getActivity().getExternalFilesDir(null) + "/" + mMovieDetail.get(5) + "_backdrop.jpg";
                                                  Log.v(LOG_TAG, "Local Dir poster path: " + posterPath);
                                                  Log.v(LOG_TAG, "Local Dir backdrop path: " + backdropPath);
 
-                                                 Target target = new Target() {
-                                                     @Override
-                                                     public void onBitmapLoaded(final Bitmap bitmap, Picasso.LoadedFrom from) {
-                                                         new Thread(new Runnable() {
-                                                             @Override
-                                                             public void run() {
-//                                                                 File file = new File(Environment.getExternalStorageDirectory().getPath() + "/image1.jpg");
-                                                                 try {
-//                                                                     file.createNewFile();
-                                                                     FileOutputStream outStream = new FileOutputStream(posterPath);
-                                                                     bitmap.compress(Bitmap.CompressFormat.JPEG, 100, outStream);
-                                                                     outStream.close();
-                                                                 } catch (Exception e) {
-                                                                     e.printStackTrace();
-                                                                 }
-                                                             }
-                                                         }).start();
-                                                     }
-
-                                                     @Override
-                                                     public void onBitmapFailed(Drawable errorDrawable) {}
-
-                                                     @Override
-                                                     public void onPrepareLoad(Drawable placeHolderDrawable) {
-                                                         if (placeHolderDrawable != null) {}
-                                                     }
-                                                 };
-
-                                                 Target target1 = new Target() {
-                                                     @Override
-                                                     public void onBitmapLoaded(final Bitmap bitmap, Picasso.LoadedFrom from) {
-                                                         new Thread(new Runnable() {
-                                                             @Override
-                                                             public void run() {
-//                                                                 File file = new File(Environment.getExternalStorageDirectory().getPath() + "/image1.jpg");
-                                                                 try {
-//                                                                     file.createNewFile();
-                                                                     FileOutputStream outStream1 = new FileOutputStream(backdropPath);
-                                                                     bitmap.compress(Bitmap.CompressFormat.JPEG, 100, outStream1);
-                                                                     outStream1.close();
-                                                                 } catch (Exception e) {
-                                                                     e.printStackTrace();
-                                                                 }
-                                                             }
-                                                         }).start();
-                                                     }
-
-                                                     @Override
-                                                     public void onBitmapFailed(Drawable errorDrawable) {}
-
-                                                     @Override
-                                                     public void onPrepareLoad(Drawable placeHolderDrawable) {
-                                                         if (placeHolderDrawable != null) {}
-                                                     }
-                                                 };
-
-//                                                 final String[] IMAGE_PATH = new String[]{mMovieDetail.get(1), mMovieDetail.get(6)};
-//                                                 final String[] IMAGE_TARGET = new String[]{posterPath, backdropPath};
-//
-//                                                 for (int i = 0; i<IMAGE_PATH.length; i++){
-//                                                     Picasso.with(getActivity())
-//                                                         .load(IMAGE_PATH[i])
-//                                                         .into(Utility.setTarget(IMAGE_TARGET[i]));
-//                                                 }
-
                                                  Picasso.with(getActivity())
                                                          .load(mMovieDetail.get(1))
-                                                         .into(Utility.setTarget(posterPath));
+                                                         .into(Utility.setTargetPoster(posterPath));
 //                                                         .into(target);
-
 
                                                  Picasso.with(getActivity())
                                                          .load(mMovieDetail.get(6))
-                                                         .into(Utility.setTarget1(backdropPath));
+                                                         .into(Utility.setTargetBackdrop(backdropPath));
 //                                                         .into(target1);
-
-
 
                                                  ContentValues contentValues = new ContentValues();
                                                  contentValues.put(FavMoviesEntry.COLUMN_MOVIE_ID,mMovieDetail.get(5));
