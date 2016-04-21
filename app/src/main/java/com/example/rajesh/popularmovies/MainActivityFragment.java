@@ -1,12 +1,9 @@
 package com.example.rajesh.popularmovies;
 
-import android.content.Intent;
-import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -37,6 +34,17 @@ import java.util.ArrayList;
  */
 public class MainActivityFragment extends Fragment{
 
+    /**
+     * A callback interface that all activities containing this fragment must
+     * implement. This mechanism allows activities to be notified of item
+     * selections.
+     */
+    public interface Callback {
+        /**
+         * DetailFragmentCallback for when an item has been selected.
+         */
+        public void onItemSelected(ArrayList<ArrayList<String>> movieList, String movieJsonStr, int position);
+    }
 
     public MainActivityFragment() {
     }
@@ -102,9 +110,10 @@ public class MainActivityFragment extends Fragment{
     }
 
     /** Method for calling background thread with parameter got from Settings Menu */
-    private void updateMovieData(){
-        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getActivity());
-        String sortBy = sharedPref.getString(getString(R.string.pref_sort), getString(R.string.pref_default));
+    public void updateMovieData(){
+//        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getActivity());
+//        String sortBy = sharedPref.getString(getString(R.string.pref_sort), getString(R.string.pref_default));
+        String sortBy = Utility.getPreferredSortBy(getActivity());
 
         if (sortBy.equals(getString(R.string.pref_favorites))){
             getFavoriteMovies();
@@ -170,8 +179,9 @@ public class MainActivityFragment extends Fragment{
             movieJsonStr = savedInstanceState.getString("movieJsonStr");
             mImageAdapter = new ImageAdapter(getActivity(), mPosterLinks);
             // To get Favorite Movie Details in case of rotation of device
-            SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getActivity());
-            String sortBy = sharedPref.getString(getString(R.string.pref_sort), getString(R.string.pref_default));
+//            SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getActivity());
+//            String sortBy = sharedPref.getString(getString(R.string.pref_sort), getString(R.string.pref_default));
+            String sortBy = Utility.getPreferredSortBy(getActivity());
             if (sortBy.equals(getString(R.string.pref_favorites))) {
                 getFavoriteMovies();
             }
@@ -189,20 +199,23 @@ public class MainActivityFragment extends Fragment{
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 //Toast.makeText(getActivity(), mImageAdapter.getItem(position).toString(), Toast.LENGTH_SHORT).show();
-                Intent showDetail = new Intent(getActivity(), DetailActivity.class);
-                try {
-                    SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getActivity());
-                    String sortBy = sharedPref.getString(getString(R.string.pref_sort), getString(R.string.pref_default));
-                    if (sortBy.equals(getString(R.string.pref_favorites))){
-                        showDetail.putStringArrayListExtra(Intent.EXTRA_TEXT, movieList.get(position));
-                    }else {
-                        showDetail.putStringArrayListExtra(Intent.EXTRA_TEXT, new JSONParser().getMovieDataFromJson(movieJsonStr, position));
-                    }
+//                Intent showDetail = new Intent(getActivity(), DetailActivity.class);
+//                try {
+////                    SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getActivity());
+////                    String sortBy = sharedPref.getString(getString(R.string.pref_sort), getString(R.string.pref_default));
+//                    String sortBy = Utility.getPreferredSortBy(getActivity());
+//                    if (sortBy.equals(getString(R.string.pref_favorites))){
+//                        showDetail.putStringArrayListExtra(Intent.EXTRA_TEXT, movieList.get(position));
+//                    }else {
+//                        showDetail.putStringArrayListExtra(Intent.EXTRA_TEXT, new JSONParser().getMovieDataFromJson(movieJsonStr, position));
+//                    }
+//
+//                    startActivity(showDetail);
+//                } catch (JSONException e) {
+//                    Log.e(LOG_TAG, "JSON Error", e);
+//                }
 
-                    startActivity(showDetail);
-                } catch (JSONException e) {
-                    Log.e(LOG_TAG, "JSON Error", e);
-                }
+                ((Callback) getActivity()).onItemSelected(movieList, movieJsonStr, position);
 
             }
         });

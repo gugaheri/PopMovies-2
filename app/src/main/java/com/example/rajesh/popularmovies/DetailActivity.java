@@ -20,6 +20,17 @@ public class DetailActivity extends AppCompatActivity {
         PreferenceManager.setDefaultValues(this, R.xml.preferences, false);
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+        if (savedInstanceState == null){
+            Bundle arguments = new Bundle();
+            arguments.putStringArrayList(DetailActivityFragment.MOVIE_DETAIL, getIntent().getStringArrayListExtra(Intent.EXTRA_TEXT));
+            DetailActivityFragment fragment = new DetailActivityFragment();
+            fragment.setArguments(arguments);
+
+            getSupportFragmentManager().beginTransaction()
+                    .add(R.id.fragment_detail_container, fragment)
+                    .commit();
+        }
     }
 
     @Override

@@ -48,6 +48,8 @@ public class DetailActivityFragment extends Fragment {
     private Uri mInsertedMovie;
     private int mDeletedRows;
 
+    static final String MOVIE_DETAIL = "MOVIE_DETAIL";
+
 //    private String[] mReviews = {""};
 //    private ArrayAdapter<String> mReviewAdapter;
     public static ArrayList<String> sReviews;
@@ -82,7 +84,7 @@ public class DetailActivityFragment extends Fragment {
 //        } else {
 //            Log.d(LOG_TAG, "Share Action Provider is null?");
 //        }
-        setShareIntent();
+//        setShareIntent();
     }
 
     private Intent createShareForecastIntent() {
@@ -120,8 +122,20 @@ public class DetailActivityFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        Intent showDetail = getActivity().getIntent();
-        mMovieDetail = showDetail.getStringArrayListExtra(Intent.EXTRA_TEXT);
+//        Intent showDetail = getActivity().getIntent();
+//
+//        if (showDetail == null || showDetail.getData() == null) {
+//            return null;
+//        } else {
+//            mMovieDetail = showDetail.getStringArrayListExtra(Intent.EXTRA_TEXT);
+//        }
+
+        Bundle arguments = getArguments();
+        if (arguments != null) {
+            mMovieDetail = arguments.getStringArrayList(MOVIE_DETAIL);
+        } else {
+            return null;
+        }
 
         //savedInstanceState used to restore data on rotation of phone
         if(savedInstanceState == null || !savedInstanceState.containsKey("reviews") || !savedInstanceState.containsKey("trailerLinks")) {
@@ -348,7 +362,9 @@ public class DetailActivityFragment extends Fragment {
     public void onDestroy() {
         super.onDestroy();
         Log.v(LOG_TAG, "onDestroy");
-        mMovieCursor.close();
+        if ( mMovieCursor != null) {
+            mMovieCursor.close();
+        }
     }
 
 //    @Override

@@ -2,10 +2,12 @@ package com.example.rajesh.popularmovies;
 
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.preference.PreferenceManager;
 import android.util.Log;
 
 import com.squareup.picasso.Picasso;
@@ -28,6 +30,12 @@ public class Utility {
         NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
         return activeNetwork != null && activeNetwork.isConnectedOrConnecting();
     }
+
+    public static String getPreferredSortBy(Context context) {
+        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(context);
+        return sharedPref.getString(context.getString(R.string.pref_sort), context.getString(R.string.pref_default));
+    }
+
 
     public static Target setTargetPoster(final String imagePath) {
 //        final String path = imagePath;
