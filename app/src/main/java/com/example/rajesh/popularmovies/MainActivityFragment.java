@@ -56,7 +56,8 @@ public class MainActivityFragment extends Fragment{
     public String movieJsonStr;
     // ArrayList to contain favorite movies info as an ArrayList
     public ArrayList<ArrayList<String>> movieList = new ArrayList<ArrayList<String>>();
-
+    private int mPosition = GridView.INVALID_POSITION;
+    private static final String SELECTED_KEY = "selected_position";
 
     public final String LOG_TAG = FetchMovieTask.class.getSimpleName();
 
@@ -154,7 +155,9 @@ public class MainActivityFragment extends Fragment{
     public void onSaveInstanceState(Bundle outState) {
         outState.putStringArray("posterLinks", mPosterLinks);
         outState.putString("movieJsonStr", movieJsonStr);
-
+        if (mPosition != GridView.INVALID_POSITION) {
+            outState.putInt(SELECTED_KEY, mPosition);
+        }
 
         super.onSaveInstanceState(outState);
     }
@@ -217,8 +220,17 @@ public class MainActivityFragment extends Fragment{
 
                 ((Callback) getActivity()).onItemSelected(movieList, movieJsonStr, position);
 
+                mPosition = position;
             }
         });
+
+        if (savedInstanceState != null && savedInstanceState.containsKey(SELECTED_KEY)) {
+            mPosition = savedInstanceState.getInt(SELECTED_KEY);
+        }
+
+        if (mPosition != GridView.INVALID_POSITION) {
+            gridView.smoothScrollToPosition(mPosition);
+        }
 
         return rootView;
     }

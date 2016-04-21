@@ -40,7 +40,7 @@ public class DetailActivityFragment extends Fragment {
     }
 
     public final String LOG_TAG = DetailActivityFragment.class.getSimpleName();
-    private ArrayList<String> mMovieDetail  = new ArrayList<String>();
+    private ArrayList<String> mMovieDetail = new ArrayList<String>();
     private final String VOTE_MAX = "/10";
     private ShareActionProvider mShareActionProvider;
     private boolean mIsFavorite;// = false;
@@ -84,7 +84,9 @@ public class DetailActivityFragment extends Fragment {
 //        } else {
 //            Log.d(LOG_TAG, "Share Action Provider is null?");
 //        }
-        setShareIntent();
+        if( ! mMovieDetail.isEmpty()) {
+            setShareIntent();
+        }
     }
 
     private Intent createShareForecastIntent() {
@@ -123,6 +125,7 @@ public class DetailActivityFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        Log.v(LOG_TAG, "onCreateView");
 //        Intent showDetail = getActivity().getIntent();
 //
 //        if (showDetail == null || showDetail.getData() == null) {
@@ -245,13 +248,13 @@ public class DetailActivityFragment extends Fragment {
         favButton.setOnClickListener(new View.OnClickListener() {
                                          @Override
                                          public void onClick(View view) {
-                                             if (mIsFavorite){
+                                             if (mIsFavorite) {
                                                  favButton.setImageResource(R.drawable.unfavorite);
 
                                                  mDeletedRows = getActivity().getContentResolver().delete(
                                                          FavMoviesEntry.CONTENT_URI,
                                                          FavMoviesEntry.COLUMN_MOVIE_ID + " = ?",
-                                                         new String[]{ mMovieDetail.get(5)}
+                                                         new String[]{mMovieDetail.get(5)}
                                                  );
                                                  Log.v(LOG_TAG, "No. of Movie deleted: " + mDeletedRows);
                                                  // Deleting the saved poster from device storage has been commented out
@@ -266,7 +269,7 @@ public class DetailActivityFragment extends Fragment {
                                                  Toast.makeText(getActivity(),
                                                          "Removed from Favorite", Toast.LENGTH_SHORT).show();
 
-                                             }else{
+                                             } else {
                                                  favButton.setImageResource(R.drawable.favorite);
 
                                                  // Target to save the poster image on device storage
@@ -289,14 +292,14 @@ public class DetailActivityFragment extends Fragment {
 //                                                         .into(target1);
 
                                                  ContentValues contentValues = new ContentValues();
-                                                 contentValues.put(FavMoviesEntry.COLUMN_MOVIE_ID,mMovieDetail.get(5));
+                                                 contentValues.put(FavMoviesEntry.COLUMN_MOVIE_ID, mMovieDetail.get(5));
                                                  contentValues.put(FavMoviesEntry.COLUMN_TITLE, mMovieDetail.get(0));
 //                                                 contentValues.put(FavMoviesEntry.COLUMN_POSTER_PATH,mMovieDetail.get(1));
                                                  contentValues.put(FavMoviesEntry.COLUMN_POSTER_PATH, "file://" + posterPath);
                                                  contentValues.put(FavMoviesEntry.COLUMN_BACKDROP_PATH, "file://" + backdropPath);
-                                                 contentValues.put(FavMoviesEntry.COLUMN_RELEASE_DATE,mMovieDetail.get(2));
-                                                 contentValues.put(FavMoviesEntry.COLUMN_USER_RATING,mMovieDetail.get(3));
-                                                 contentValues.put(FavMoviesEntry.COLUMN_OVERVIEW,mMovieDetail.get(4));
+                                                 contentValues.put(FavMoviesEntry.COLUMN_RELEASE_DATE, mMovieDetail.get(2));
+                                                 contentValues.put(FavMoviesEntry.COLUMN_USER_RATING, mMovieDetail.get(3));
+                                                 contentValues.put(FavMoviesEntry.COLUMN_OVERVIEW, mMovieDetail.get(4));
 
                                                  mInsertedMovie = getActivity().getContentResolver().insert(
                                                          FavMoviesEntry.CONTENT_URI,
