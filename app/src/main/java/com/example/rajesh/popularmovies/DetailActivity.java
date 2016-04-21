@@ -14,12 +14,6 @@ public class DetailActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detail);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-        //Setting default preference
-        PreferenceManager.setDefaultValues(this, R.xml.preferences, false);
-
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         if (savedInstanceState == null){
             Bundle arguments = new Bundle();
@@ -31,6 +25,15 @@ public class DetailActivity extends AppCompatActivity {
                     .add(R.id.fragment_detail_container, fragment)
                     .commit();
         }
+
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        //Setting default preference
+        PreferenceManager.setDefaultValues(this, R.xml.preferences, false);
+
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+
     }
 
     @Override

@@ -85,6 +85,13 @@ public class MainActivity extends AppCompatActivity implements MainActivityFragm
             if ( null != ff ) {
                 ff.updateMovieData();
             }
+            // Below lines are giving exception.
+//            DetailActivityFragment df = (DetailActivityFragment)getSupportFragmentManager().findFragmentByTag(DETAILFRAGMENT_TAG);
+//            if ( null != df ) {
+//                Bundle args = new Bundle();
+//                df.setArguments(args);
+//            }
+
             mSortBy = sortBy;
         }
     }

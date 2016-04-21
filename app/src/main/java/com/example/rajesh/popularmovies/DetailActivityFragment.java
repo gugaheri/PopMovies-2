@@ -84,7 +84,7 @@ public class DetailActivityFragment extends Fragment {
 //        } else {
 //            Log.d(LOG_TAG, "Share Action Provider is null?");
 //        }
-//        setShareIntent();
+        setShareIntent();
     }
 
     private Intent createShareForecastIntent() {
@@ -93,7 +93,7 @@ public class DetailActivityFragment extends Fragment {
         shareIntent.setType("text/plain");
         shareIntent.putExtra(Intent.EXTRA_TEXT,
                 "Check out the trailer for movie " + mMovieDetail.get(0) + " at Youtube link: " + new JSONParser().getYoutubeUrl(sTrailers, 0));
-//        Log.v(LOG_TAG, "Share Intent:" + sTrailers[0]);
+        Log.v(LOG_TAG, "Share Intent:" + "Check out the trailer for movie.");
         return shareIntent;
     }
 
@@ -101,6 +101,7 @@ public class DetailActivityFragment extends Fragment {
     private void setShareIntent() {
         if (mShareActionProvider != null ) {
             mShareActionProvider.setShareIntent(createShareForecastIntent());
+            Log.d(LOG_TAG, "Share Action Provider is not null.");
         } else {
             Log.d(LOG_TAG, "Share Action Provider is null?");
         }
@@ -354,7 +355,8 @@ public class DetailActivityFragment extends Fragment {
             }
         });
 
-
+//        Log.v(LOG_TAG, "Just before returning rootView");
+//        setShareIntent();
         return rootView;
     }
 
