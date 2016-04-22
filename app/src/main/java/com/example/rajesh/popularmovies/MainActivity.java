@@ -16,6 +16,7 @@ import java.util.ArrayList;
 public class MainActivity extends AppCompatActivity implements MainActivityFragment.Callback {
 
     private final String LOG_TAG = MainActivity.class.getSimpleName();
+    private static final String MAINFRAGMENT_TAG = "MFTAG";
     private static final String DETAILFRAGMENT_TAG = "DFTAG";
     private boolean mTwoPane;
     private String mSortBy;
@@ -84,7 +85,10 @@ public class MainActivity extends AppCompatActivity implements MainActivityFragm
         if (sortBy != null && !sortBy.equals(mSortBy)) {
             MainActivityFragment ff = (MainActivityFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_main);
             if (null != ff) {
-                ff.updateMovieData();
+//                ff.updateMovieData();
+                getSupportFragmentManager().beginTransaction()
+                        .replace(R.id.fragment_main, new MainActivityFragment(), MAINFRAGMENT_TAG)
+                        .commit();
             }
             // Below lines are giving exception for setting args to null.
             DetailActivityFragment df = (DetailActivityFragment)getSupportFragmentManager().findFragmentByTag(DETAILFRAGMENT_TAG);

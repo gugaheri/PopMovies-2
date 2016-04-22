@@ -22,6 +22,7 @@ import android.widget.GridView;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -50,22 +51,23 @@ public class DetailActivityFragment extends Fragment {
 
     static final String MOVIE_DETAIL = "MOVIE_DETAIL";
 
-//    private String[] mReviews = {""};
-//    private ArrayAdapter<String> mReviewAdapter;
+//    private String[] reviews = {""};
+//    private ArrayAdapter<String> reviewAdapter;
 //    public static ArrayList<String> sReviews;
 //    public static String[] sTrailers;
 //    public static ImageAdapter sTrailerAdapter;
 //    public static ArrayAdapter<String> sReviewAdapter;
-    public ArrayList<String> mReviews;
-    public String[] mTrailers;
-    public ImageAdapter mTrailerAdapter;
-    public ArrayAdapter<String> mReviewAdapter;
+    public ArrayList<String> reviews;
+    public String[] trailers;
+    public ImageAdapter trailerAdapter;
+    public ArrayAdapter<String> reviewAdapter;
+    public ScrollView scrollView;
 
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
-        outState.putStringArrayList("reviews", mReviews);
-        outState.putStringArray("trailerLinks", mTrailers);
+        outState.putStringArrayList("reviews", reviews);
+        outState.putStringArray("trailerLinks", trailers);
 
         super.onSaveInstanceState(outState);
     }
@@ -101,7 +103,7 @@ public class DetailActivityFragment extends Fragment {
         shareIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET);
         shareIntent.setType("text/plain");
         shareIntent.putExtra(Intent.EXTRA_TEXT,
-                "Check out the trailer for movie " + mMovieDetail.get(0) + " at Youtube link: " + new JSONParser().getYoutubeUrl(mTrailers, 0));
+                "Check out the trailer of movie " + mMovieDetail.get(0) + " at Youtube link: " + new JSONParser().getYoutubeUrl(trailers, 0));
         Log.v(LOG_TAG, "Share Intent:" + "Check out the trailer for movie: " + mMovieDetail.get(0));
         return shareIntent;
     }
@@ -150,8 +152,8 @@ public class DetailActivityFragment extends Fragment {
 
         //savedInstanceState used to restore data on rotation of phone
         if(savedInstanceState == null || !savedInstanceState.containsKey("reviews") || !savedInstanceState.containsKey("trailerLinks")) {
-            mReviews = new ArrayList<String>();
-            mTrailers = new String[0];
+            reviews = new ArrayList<String>();
+            trailers = new String[0];
 //            new FetchTrailerTask().execute(mMovieDetail.get(5));
 //            new FetchReviewTask().execute(mMovieDetail.get(5));
 
@@ -168,8 +170,8 @@ public class DetailActivityFragment extends Fragment {
 
         }
         else {
-            mReviews = savedInstanceState.getStringArrayList("reviews");
-            mTrailers = savedInstanceState.getStringArray("trailerLinks");
+            reviews = savedInstanceState.getStringArrayList("reviews");
+            trailers = savedInstanceState.getStringArray("trailerLinks");
         }
         // Updating share intent as Trailers got fetched from background thread
 //        mShareActionProvider.setShareIntent(createShareTrailerIntent());
@@ -177,6 +179,8 @@ public class DetailActivityFragment extends Fragment {
 //        mShareActionProvider.setShareIntent(createShareTrailerIntent());
 
         View rootView = inflater.inflate(R.layout.fragment_detail, container, false);
+
+        scrollView = (ScrollView)rootView.findViewById(R.id.scroll_view);
 
         ImageView movieBackdrop = (ImageView)rootView.findViewById(R.id.movie_backdrop);
         Picasso.with(getActivity()).load(mMovieDetail.get(6)).fit().placeholder(R.drawable.no_image_available).into(movieBackdrop);
@@ -196,8 +200,8 @@ public class DetailActivityFragment extends Fragment {
         TextView movieOverview = (TextView)rootView.findViewById(R.id.movie_overview);
         movieOverview.setText(mMovieDetail.get(4));
 
-        mTrailerAdapter = new ImageAdapter(getActivity(), mTrailers);
-        mReviewAdapter = new ArrayAdapter<String>(getActivity(), R.layout.review_item, R.id.review_item_textview, mReviews);
+        trailerAdapter = new ImageAdapter(getActivity(), trailers);
+        reviewAdapter = new ArrayAdapter<String>(getActivity(), R.layout.review_item, R.id.review_item_textview, reviews);
 //        trailerAdapter = new ImageAdapter(getActivity(), new String[0]);
 //        reviewAdapter = new ArrayAdapter<String>(getActivity(), R.layout.review_item, R.id.review_item_textview, new ArrayList<String>());
 
@@ -205,17 +209,17 @@ public class DetailActivityFragment extends Fragment {
 //        new FetchReviewTask().execute(mMovieDetail.get(5));
 
         GridView gridView = (GridView)rootView.findViewById(R.id.trailer_grid_view);
-        gridView.setAdapter(mTrailerAdapter);
+        gridView.setAdapter(trailerAdapter);
 
         //Log.v(LOG_TAG, "reviews:" + reviews[0]);
         ListView listView = (ListView) rootView.findViewById(R.id.listview_reviews);
-//        mReviewAdapter.notifyDataSetChanged();
-        listView.setAdapter(mReviewAdapter);
+//        reviewAdapter.notifyDataSetChanged();
+        listView.setAdapter(reviewAdapter);
 
         gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                String youtubeUrl = new JSONParser().getYoutubeUrl(mTrailers, position);
+                String youtubeUrl = new JSONParser().getYoutubeUrl(trailers, position);
                 Uri youtubeUri = Uri.parse(youtubeUrl);
                 Intent intent = new Intent(Intent.ACTION_VIEW, youtubeUri);
 //                Log.v(LOG_TAG, "sTrailers:" + sTrailers[position] );
@@ -371,7 +375,15 @@ public class DetailActivityFragment extends Fragment {
 //        ScrollView scrollView = (ScrollView)rootView.findViewById(R.id.scroll_view);
 //        scrollView.setSmoothScrollingEnabled(true);
 //        scrollView.smoothScrollTo(0, 0);
-//        scrollView.pageScroll(View.FOCUS_UP);
+//        scrollView.fullScroll(ScrollView.FOCUS_UP);
+        scrollView.post(new Runnable() {
+            @Override
+            public void run() {
+                scrollView.fullScroll(ScrollView.FOCUS_UP);
+//                scrollView.pageScroll(ScrollView.FOCUS_UP);
+//                scrollView.smoothScrollTo(0, 0);
+            }
+        });
         return rootView;
     }
 

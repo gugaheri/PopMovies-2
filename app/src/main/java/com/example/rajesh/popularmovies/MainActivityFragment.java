@@ -235,6 +235,12 @@ public class MainActivityFragment extends Fragment{
         return rootView;
     }
 
+//    @Override
+//    public void onDestroy() {
+//        super.onDestroy();
+////        mImageAdapter.updateData(new String[]{});
+//
+//    }
 
     public void getFavoriteMovies(){
         Cursor movieCursor = getActivity().getContentResolver().query(

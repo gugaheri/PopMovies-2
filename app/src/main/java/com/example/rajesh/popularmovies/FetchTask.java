@@ -3,6 +3,7 @@ package com.example.rajesh.popularmovies;
 /**
  * Created by Rajesh on 10-Apr-16.
  */
+
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.util.Log;
@@ -148,17 +149,19 @@ public class FetchTask extends AsyncTask<String, Void, String[]> {
             case "TRAILERS":
 //                DetailActivityFragment.sTrailers = strings;
 //                DetailActivityFragment.sTrailerAdapter.updateData(DetailActivityFragment.sTrailers);
-                mDetailActivityFragment.mTrailers = strings;
-                mDetailActivityFragment.mTrailerAdapter.updateData(mDetailActivityFragment.mTrailers);
+                mDetailActivityFragment.trailers = strings;
+                mDetailActivityFragment.trailerAdapter.updateData(mDetailActivityFragment.trailers);
                 mDetailActivityFragment.setShareIntent();
                 break;
             case "REVIEWS":
-                mDetailActivityFragment.mReviews = new ArrayList<String>(Arrays.asList(strings));
-                mDetailActivityFragment.mReviewAdapter.clear();
-                mDetailActivityFragment.mReviewAdapter.addAll(mDetailActivityFragment.mReviews);
-                mDetailActivityFragment.mReviewAdapter.notifyDataSetChanged();
+                mDetailActivityFragment.reviews = new ArrayList<String>(Arrays.asList(strings));
+                mDetailActivityFragment.reviewAdapter.clear();
+                mDetailActivityFragment.reviewAdapter.addAll(mDetailActivityFragment.reviews);
+                mDetailActivityFragment.reviewAdapter.notifyDataSetChanged();
                 break;
             }
+//        mDetailActivityFragment.scrollView.fullScroll(ScrollView.FOCUS_UP);;
+//        mDetailActivityFragment.scrollView.smoothScrollTo(0, 0);
 
     }
 }
