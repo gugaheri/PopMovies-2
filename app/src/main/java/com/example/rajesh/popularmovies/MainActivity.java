@@ -78,6 +78,7 @@ public class MainActivity extends AppCompatActivity implements MainActivityFragm
     @Override
     protected void onResume() {
         super.onResume();
+        Log.v(LOG_TAG, "onResume() of Main Activity");
         String sortBy = Utility.getPreferredSortBy(this);
         // update the SortBy in our second pane using the fragment manager
         if (sortBy != null && !sortBy.equals(mSortBy)) {
@@ -85,17 +86,19 @@ public class MainActivity extends AppCompatActivity implements MainActivityFragm
             if (null != ff) {
                 ff.updateMovieData();
             }
-            // Below lines are giving exception.
-//            DetailActivityFragment df = (DetailActivityFragment)getSupportFragmentManager().findFragmentByTag(DETAILFRAGMENT_TAG);
-//            if ( null != df ) {
+            // Below lines are giving exception for setting args to null.
+            DetailActivityFragment df = (DetailActivityFragment)getSupportFragmentManager().findFragmentByTag(DETAILFRAGMENT_TAG);
+            if ( null != df ) {
 //                Bundle args = new Bundle();
 //                df.setArguments(null);
-//        }
-            getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.fragment_detail_container, new DetailActivityFragment(), DETAILFRAGMENT_TAG)
-                    .commit();
+
+                getSupportFragmentManager().beginTransaction()
+                        .replace(R.id.fragment_detail_container, new DetailActivityFragment(), DETAILFRAGMENT_TAG)
+                        .commit();
+            }
 
             mSortBy = sortBy;
+
         }
     }
 
