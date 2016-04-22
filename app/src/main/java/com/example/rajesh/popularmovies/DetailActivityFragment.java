@@ -52,16 +52,20 @@ public class DetailActivityFragment extends Fragment {
 
 //    private String[] mReviews = {""};
 //    private ArrayAdapter<String> mReviewAdapter;
-    public static ArrayList<String> sReviews;
-    public static String[] sTrailers;
-    public static ImageAdapter sTrailerAdapter;
-    public static ArrayAdapter<String> sReviewAdapter;
+//    public static ArrayList<String> sReviews;
+//    public static String[] sTrailers;
+//    public static ImageAdapter sTrailerAdapter;
+//    public static ArrayAdapter<String> sReviewAdapter;
+    public ArrayList<String> mReviews;
+    public String[] mTrailers;
+    public ImageAdapter mTrailerAdapter;
+    public ArrayAdapter<String> mReviewAdapter;
 
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
-        outState.putStringArrayList("reviews", sReviews);
-        outState.putStringArray("trailerLinks", sTrailers);
+        outState.putStringArrayList("reviews", mReviews);
+        outState.putStringArray("trailerLinks", mTrailers);
 
         super.onSaveInstanceState(outState);
     }
@@ -76,33 +80,36 @@ public class DetailActivityFragment extends Fragment {
 
         // Get the provider and hold onto it to set/change the share intent.
         mShareActionProvider = (ShareActionProvider) MenuItemCompat.getActionProvider(menuItem);
+        Log.v(LOG_TAG, "onCreateOptionsMenu()");
 
         // Attach an intent to this ShareActionProvider.  You can update this at any time,
         // like when the user selects a new piece of data they might like to share.
 //        if (mShareActionProvider != null ) {
-//            mShareActionProvider.setShareIntent(createShareForecastIntent());
+//            mShareActionProvider.setShareIntent(createShareTrailerIntent());
 //        } else {
 //            Log.d(LOG_TAG, "Share Action Provider is null?");
 //        }
         if( ! mMovieDetail.isEmpty()) {
             setShareIntent();
+        } else{
+            mShareActionProvider.setShareIntent(null);
         }
     }
 
-    private Intent createShareForecastIntent() {
+    public Intent createShareTrailerIntent() {
         Intent shareIntent = new Intent(Intent.ACTION_SEND);
         shareIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET);
         shareIntent.setType("text/plain");
         shareIntent.putExtra(Intent.EXTRA_TEXT,
-                "Check out the trailer for movie " + mMovieDetail.get(0) + " at Youtube link: " + new JSONParser().getYoutubeUrl(sTrailers, 0));
-        Log.v(LOG_TAG, "Share Intent:" + "Check out the trailer for movie.");
+                "Check out the trailer for movie " + mMovieDetail.get(0) + " at Youtube link: " + new JSONParser().getYoutubeUrl(mTrailers, 0));
+        Log.v(LOG_TAG, "Share Intent:" + "Check out the trailer for movie: " + mMovieDetail.get(0));
         return shareIntent;
     }
 
     // Call to update the share intent
-    private void setShareIntent() {
+    public void setShareIntent() {
         if (mShareActionProvider != null ) {
-            mShareActionProvider.setShareIntent(createShareForecastIntent());
+            mShareActionProvider.setShareIntent(createShareTrailerIntent());
             Log.d(LOG_TAG, "Share Action Provider is not null.");
         } else {
             Log.d(LOG_TAG, "Share Action Provider is null?");
@@ -143,16 +150,16 @@ public class DetailActivityFragment extends Fragment {
 
         //savedInstanceState used to restore data on rotation of phone
         if(savedInstanceState == null || !savedInstanceState.containsKey("reviews") || !savedInstanceState.containsKey("trailerLinks")) {
-            sReviews = new ArrayList<String>();
-            sTrailers = new String[0];
+            mReviews = new ArrayList<String>();
+            mTrailers = new String[0];
 //            new FetchTrailerTask().execute(mMovieDetail.get(5));
 //            new FetchReviewTask().execute(mMovieDetail.get(5));
 
             if(Utility.isNetworkAvailable(getContext())) {
-                FetchTask fetchTrailerTask = new FetchTask();
+                FetchTask fetchTrailerTask = new FetchTask(this);
                 fetchTrailerTask.setFetch("TRAILERS");
                 fetchTrailerTask.execute(mMovieDetail.get(5));
-                FetchTask fetchReviewTask = new FetchTask();
+                FetchTask fetchReviewTask = new FetchTask(this);
                 fetchReviewTask.setFetch("REVIEWS");
                 fetchReviewTask.execute(mMovieDetail.get(5));
             } else {
@@ -161,13 +168,13 @@ public class DetailActivityFragment extends Fragment {
 
         }
         else {
-            sReviews = savedInstanceState.getStringArrayList("reviews");
-            sTrailers = savedInstanceState.getStringArray("trailerLinks");
+            mReviews = savedInstanceState.getStringArrayList("reviews");
+            mTrailers = savedInstanceState.getStringArray("trailerLinks");
         }
         // Updating share intent as Trailers got fetched from background thread
-//        mShareActionProvider.setShareIntent(createShareForecastIntent());
+//        mShareActionProvider.setShareIntent(createShareTrailerIntent());
 //        setShareIntent();
-//        mShareActionProvider.setShareIntent(createShareForecastIntent());
+//        mShareActionProvider.setShareIntent(createShareTrailerIntent());
 
         View rootView = inflater.inflate(R.layout.fragment_detail, container, false);
 
@@ -189,8 +196,8 @@ public class DetailActivityFragment extends Fragment {
         TextView movieOverview = (TextView)rootView.findViewById(R.id.movie_overview);
         movieOverview.setText(mMovieDetail.get(4));
 
-        sTrailerAdapter = new ImageAdapter(getActivity(), sTrailers);
-        sReviewAdapter = new ArrayAdapter<String>(getActivity(), R.layout.review_item, R.id.review_item_textview, sReviews);
+        mTrailerAdapter = new ImageAdapter(getActivity(), mTrailers);
+        mReviewAdapter = new ArrayAdapter<String>(getActivity(), R.layout.review_item, R.id.review_item_textview, mReviews);
 //        trailerAdapter = new ImageAdapter(getActivity(), new String[0]);
 //        reviewAdapter = new ArrayAdapter<String>(getActivity(), R.layout.review_item, R.id.review_item_textview, new ArrayList<String>());
 
@@ -198,17 +205,17 @@ public class DetailActivityFragment extends Fragment {
 //        new FetchReviewTask().execute(mMovieDetail.get(5));
 
         GridView gridView = (GridView)rootView.findViewById(R.id.trailer_grid_view);
-        gridView.setAdapter(sTrailerAdapter);
+        gridView.setAdapter(mTrailerAdapter);
 
         //Log.v(LOG_TAG, "reviews:" + reviews[0]);
         ListView listView = (ListView) rootView.findViewById(R.id.listview_reviews);
 //        mReviewAdapter.notifyDataSetChanged();
-        listView.setAdapter(sReviewAdapter);
+        listView.setAdapter(mReviewAdapter);
 
         gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                String youtubeUrl = new JSONParser().getYoutubeUrl(sTrailers, position);
+                String youtubeUrl = new JSONParser().getYoutubeUrl(mTrailers, position);
                 Uri youtubeUri = Uri.parse(youtubeUrl);
                 Intent intent = new Intent(Intent.ACTION_VIEW, youtubeUri);
 //                Log.v(LOG_TAG, "sTrailers:" + sTrailers[position] );
@@ -360,6 +367,11 @@ public class DetailActivityFragment extends Fragment {
 
 //        Log.v(LOG_TAG, "Just before returning rootView");
 //        setShareIntent();
+
+//        ScrollView scrollView = (ScrollView)rootView.findViewById(R.id.scroll_view);
+//        scrollView.setSmoothScrollingEnabled(true);
+//        scrollView.smoothScrollTo(0, 0);
+//        scrollView.pageScroll(View.FOCUS_UP);
         return rootView;
     }
 

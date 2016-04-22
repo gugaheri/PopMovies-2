@@ -23,6 +23,11 @@ public class FetchTask extends AsyncTask<String, Void, String[]> {
 
     public final String LOG_TAG = FetchTask.class.getSimpleName();
     private String mFetch;
+    private DetailActivityFragment mDetailActivityFragment;
+
+    public FetchTask(DetailActivityFragment detailActivityFragment){
+        mDetailActivityFragment = detailActivityFragment;
+    }
 
     public String getFetch() {
         return mFetch;
@@ -141,14 +146,17 @@ public class FetchTask extends AsyncTask<String, Void, String[]> {
 
         switch (getFetch()){
             case "TRAILERS":
-                DetailActivityFragment.sTrailers = strings;
-                DetailActivityFragment.sTrailerAdapter.updateData(DetailActivityFragment.sTrailers);
+//                DetailActivityFragment.sTrailers = strings;
+//                DetailActivityFragment.sTrailerAdapter.updateData(DetailActivityFragment.sTrailers);
+                mDetailActivityFragment.mTrailers = strings;
+                mDetailActivityFragment.mTrailerAdapter.updateData(mDetailActivityFragment.mTrailers);
+                mDetailActivityFragment.setShareIntent();
                 break;
             case "REVIEWS":
-                DetailActivityFragment.sReviews = new ArrayList<String>(Arrays.asList(strings));
-                DetailActivityFragment.sReviewAdapter.clear();
-                DetailActivityFragment.sReviewAdapter.addAll(DetailActivityFragment.sReviews);
-                DetailActivityFragment.sReviewAdapter.notifyDataSetChanged();
+                mDetailActivityFragment.mReviews = new ArrayList<String>(Arrays.asList(strings));
+                mDetailActivityFragment.mReviewAdapter.clear();
+                mDetailActivityFragment.mReviewAdapter.addAll(mDetailActivityFragment.mReviews);
+                mDetailActivityFragment.mReviewAdapter.notifyDataSetChanged();
                 break;
             }
 
