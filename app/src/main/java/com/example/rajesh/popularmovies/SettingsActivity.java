@@ -7,9 +7,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceFragment;
 
-/**
- * Created by Rajesh on 10-Mar-16.
- */
+
 public class SettingsActivity extends Activity{
 
     @Override

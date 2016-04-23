@@ -43,6 +43,7 @@ public class DetailActivityFragment extends Fragment {
         setHasOptionsMenu(true);
     }
 
+    // Butterknife Library used instead of findViewById
     @Bind(R.id.scroll_view) ScrollView scrollView;
     @Bind(R.id.movie_backdrop) ImageView movieBackdrop;
     @Bind(R.id.movie_title) TextView movieTitle;
@@ -55,6 +56,7 @@ public class DetailActivityFragment extends Fragment {
     @Bind(R.id.fav_button) ImageButton favButton;
 
     public final String LOG_TAG = DetailActivityFragment.class.getSimpleName();
+
     private ArrayList<String> mMovieDetail = new ArrayList<String>();
     private final String VOTE_MAX = "/10";
     private ShareActionProvider mShareActionProvider;
@@ -65,17 +67,10 @@ public class DetailActivityFragment extends Fragment {
 
     static final String MOVIE_DETAIL = "MOVIE_DETAIL";
 
-//    private String[] reviews = {""};
-//    private ArrayAdapter<String> reviewAdapter;
-//    public static ArrayList<String> sReviews;
-//    public static String[] sTrailers;
-//    public static ImageAdapter sTrailerAdapter;
-//    public static ArrayAdapter<String> sReviewAdapter;
     public ArrayList<String> reviews;
     public String[] trailers;
     public ImageAdapter trailerAdapter;
     public ArrayAdapter<String> reviewAdapter;
-//    public ScrollView scrollView;
 
 
     @Override
@@ -96,15 +91,8 @@ public class DetailActivityFragment extends Fragment {
 
         // Get the provider and hold onto it to set/change the share intent.
         mShareActionProvider = (ShareActionProvider) MenuItemCompat.getActionProvider(menuItem);
-        Log.v(LOG_TAG, "onCreateOptionsMenu()");
+//        Log.v(LOG_TAG, "onCreateOptionsMenu()");
 
-        // Attach an intent to this ShareActionProvider.  You can update this at any time,
-        // like when the user selects a new piece of data they might like to share.
-//        if (mShareActionProvider != null ) {
-//            mShareActionProvider.setShareIntent(createShareTrailerIntent());
-//        } else {
-//            Log.d(LOG_TAG, "Share Action Provider is null?");
-//        }
         if( ! mMovieDetail.isEmpty()) {
             setShareIntent();
         } else{
@@ -118,44 +106,24 @@ public class DetailActivityFragment extends Fragment {
         shareIntent.setType("text/plain");
         shareIntent.putExtra(Intent.EXTRA_TEXT,
                 "Check out the trailer of movie " + mMovieDetail.get(0) + " at Youtube link: " + new JSONParser().getYoutubeUrl(trailers, 0));
-        Log.v(LOG_TAG, "Share Intent:" + "Check out the trailer for movie: " + mMovieDetail.get(0));
         return shareIntent;
     }
 
-    // Call to update the share intent
+    // Method to update the share intent
     public void setShareIntent() {
         if (mShareActionProvider != null ) {
             mShareActionProvider.setShareIntent(createShareTrailerIntent());
-            Log.d(LOG_TAG, "Share Action Provider is not null.");
+//            Log.d(LOG_TAG, "Share Action Provider is not null.");
         } else {
             Log.d(LOG_TAG, "Share Action Provider is null?");
         }
     }
 
-//  Tried for BUG of Share Intent - ShareActionProvider refresh text. But its not fixing the bug
-//    @Override
-//    public boolean onOptionsItemSelected(MenuItem item) {
-//        int id = item.getItemId();
-//        //noinspection SimplifiableIfStatement
-//        if (id == R.id.action_share) {
-//            setShareIntent();
-//            return true;
-//        }
-//        return super.onOptionsItemSelected(item);
-//
-//    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         Log.v(LOG_TAG, "onCreateView");
-//        Intent showDetail = getActivity().getIntent();
-//
-//        if (showDetail == null || showDetail.getData() == null) {
-//            return null;
-//        } else {
-//            mMovieDetail = showDetail.getStringArrayListExtra(Intent.EXTRA_TEXT);
-//        }
 
         Bundle arguments = getArguments();
         if (arguments != null) {
@@ -168,8 +136,6 @@ public class DetailActivityFragment extends Fragment {
         if(savedInstanceState == null || !savedInstanceState.containsKey("reviews") || !savedInstanceState.containsKey("trailerLinks")) {
             reviews = new ArrayList<String>();
             trailers = new String[0];
-//            new FetchTrailerTask().execute(mMovieDetail.get(5));
-//            new FetchReviewTask().execute(mMovieDetail.get(5));
 
             if(Utility.isNetworkAvailable(getContext())) {
                 FetchTask fetchTrailerTask = new FetchTask(this);
@@ -187,69 +153,38 @@ public class DetailActivityFragment extends Fragment {
             reviews = savedInstanceState.getStringArrayList("reviews");
             trailers = savedInstanceState.getStringArray("trailerLinks");
         }
-        // Updating share intent as Trailers got fetched from background thread
-//        mShareActionProvider.setShareIntent(createShareTrailerIntent());
-//        setShareIntent();
-//        mShareActionProvider.setShareIntent(createShareTrailerIntent());
 
         View rootView = inflater.inflate(R.layout.fragment_detail, container, false);
-
         ButterKnife.bind(this, rootView);
 
-//        scrollView = (ScrollView)rootView.findViewById(R.id.scroll_view);
-
-//        ImageView movieBackdrop = (ImageView)rootView.findViewById(R.id.movie_backdrop);
         Picasso.with(getActivity()).load(mMovieDetail.get(6)).fit().placeholder(R.drawable.no_image_available).into(movieBackdrop);
-
-//        TextView movieTitle = (TextView)rootView.findViewById(R.id.movie_title);
         movieTitle.setText(mMovieDetail.get(0));
-
-//        ImageView moviePoster = (ImageView)rootView.findViewById(R.id.movie_poster);
         Picasso.with(getActivity()).load(mMovieDetail.get(1)).fit().placeholder(R.drawable.no_image_available).into(moviePoster);
-
-//        TextView releaseDate = (TextView)rootView.findViewById(R.id.release_date);
         releaseDate.setText(mMovieDetail.get(2));
-
-//        TextView voteAverage = (TextView)rootView.findViewById(R.id.vote_average);
         voteAverage.setText(mMovieDetail.get(3) + VOTE_MAX);
-
-//        TextView movieOverview = (TextView)rootView.findViewById(R.id.movie_overview);
         movieOverview.setText(mMovieDetail.get(4));
-
         trailerAdapter = new ImageAdapter(getActivity(), trailers);
         reviewAdapter = new ArrayAdapter<String>(getActivity(), R.layout.review_item, R.id.review_item_textview, reviews);
-//        trailerAdapter = new ImageAdapter(getActivity(), new String[0]);
-//        reviewAdapter = new ArrayAdapter<String>(getActivity(), R.layout.review_item, R.id.review_item_textview, new ArrayList<String>());
-
-//        new FetchTrailerTask().execute(mMovieDetail.get(5));
-//        new FetchReviewTask().execute(mMovieDetail.get(5));
-
-//        GridView gridView = (GridView)rootView.findViewById(R.id.trailer_grid_view);
         gridView.setAdapter(trailerAdapter);
-
-        //Log.v(LOG_TAG, "reviews:" + reviews[0]);
-//        ListView listView = (ListView) rootView.findViewById(R.id.listview_reviews);
-//        reviewAdapter.notifyDataSetChanged();
         listView.setAdapter(reviewAdapter);
 
+        // Listener for handling click on Trailers and accordingly launching Implicit Intent to watch Trailers
         gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 String youtubeUrl = new JSONParser().getYoutubeUrl(trailers, position);
                 Uri youtubeUri = Uri.parse(youtubeUrl);
                 Intent intent = new Intent(Intent.ACTION_VIEW, youtubeUri);
-//                Log.v(LOG_TAG, "sTrailers:" + sTrailers[position] );
-//                Log.v(LOG_TAG, "Youtube Url:" + youtubeUrl );
                 if (intent.resolveActivity(getActivity().getPackageManager()) != null) {
                     startActivity(intent);
                 } else {
-                    Log.d(LOG_TAG, "Couldn't play trailer, no receiving apps installed!");
+//                    Log.d(LOG_TAG, "Couldn't play trailer, no receiving apps installed!");
+                    Toast.makeText(getActivity(), "Couldn't play trailer, no receiving apps installed!", Toast.LENGTH_SHORT).show();
                 }
             }
         });
 
-//        final ImageButton favButton = (ImageButton) rootView.findViewById(R.id.fav_button);
-
+        // Cursor to check if movie already marked as Favorite
         mMovieCursor = getActivity().getContentResolver().query(
                 FavMoviesEntry.buildMovieUri(mMovieDetail.get(5)),
                 new String[]{FavMoviesEntry.COLUMN_MOVIE_ID},
@@ -258,7 +193,7 @@ public class DetailActivityFragment extends Fragment {
                 null
         );
 
-        Log.v(LOG_TAG, "Movie already in DB: " + mMovieCursor.getCount());
+//        Log.v(LOG_TAG, "Movie already in DB: " + mMovieCursor.getCount());
 
         if (mMovieCursor.getCount() > 0){
             mIsFavorite = true;
@@ -276,6 +211,7 @@ public class DetailActivityFragment extends Fragment {
                                          @Override
                                          public void onClick(View view) {
                                              if (mIsFavorite) {
+                                                 // Unfavorite the movie
                                                  favButton.setImageResource(R.drawable.unfavorite);
 
                                                  mDeletedRows = getActivity().getContentResolver().delete(
@@ -283,12 +219,12 @@ public class DetailActivityFragment extends Fragment {
                                                          FavMoviesEntry.COLUMN_MOVIE_ID + " = ?",
                                                          new String[]{mMovieDetail.get(5)}
                                                  );
-                                                 Log.v(LOG_TAG, "No. of Movie deleted: " + mDeletedRows);
+//                                                 Log.v(LOG_TAG, "No. of Movie deleted: " + mDeletedRows);
                                                  // Deleting the saved poster from device storage has been commented out
-                                                 // so that setting/unsetting favorite can work offline in Detail Activity for Favorite Movie
+                                                 // so that setting/unsetting favorite can work offline in Detail Activity/Fragment for Favorite Movie
                                                  // Delete the saved poster image from internal storage
                                                  //getActivity().deleteFile(mMovieDetail.get(5) + "_poster.jpg");
-//                                                 getActivity().deleteFile(mMovieDetail.get(5) + "_backdrop.jpg");
+                                                 //getActivity().deleteFile(mMovieDetail.get(5) + "_backdrop.jpg");
 
 //                                                 Log.v(LOG_TAG, "Poster file deleted: " + getActivity().deleteFile(mMovieDetail.get(5) + ".jpg"));
 
@@ -297,31 +233,26 @@ public class DetailActivityFragment extends Fragment {
                                                          "Removed from Favorite", Toast.LENGTH_SHORT).show();
 
                                              } else {
+                                                 // Marking the movie as Favorite
                                                  favButton.setImageResource(R.drawable.favorite);
 
-                                                 // Target to save the poster image on device storage
-//                                                 final String posterPath = "file://" + getActivity().getFilesDir() + "/" + mMovieDetail.get(5) + ".jpg";
-//                                                 final String posterPath = getActivity().getFilesDir() + "/" + mMovieDetail.get(5) + "_poster.jpg";
-//                                                 final String backdropPath = getActivity().getFilesDir() + "/" + mMovieDetail.get(5) + "_backdrop.jpg";
+                                                 // Target Name to save the poster image on device storage
                                                  final String posterPath = getActivity().getExternalFilesDir(null) + "/" + mMovieDetail.get(5) + "_poster.jpg";
                                                  final String backdropPath = getActivity().getExternalFilesDir(null) + "/" + mMovieDetail.get(5) + "_backdrop.jpg";
-                                                 Log.v(LOG_TAG, "Local Dir poster path: " + posterPath);
-                                                 Log.v(LOG_TAG, "Local Dir backdrop path: " + backdropPath);
+//                                                 Log.v(LOG_TAG, "Local Dir poster path: " + posterPath);
+//                                                 Log.v(LOG_TAG, "Local Dir backdrop path: " + backdropPath);
 
                                                  Picasso.with(getActivity())
                                                          .load(mMovieDetail.get(1))
                                                          .into(Utility.setTargetPoster(posterPath));
-//                                                         .into(target);
 
                                                  Picasso.with(getActivity())
                                                          .load(mMovieDetail.get(6))
                                                          .into(Utility.setTargetBackdrop(backdropPath));
-//                                                         .into(target1);
 
                                                  ContentValues contentValues = new ContentValues();
                                                  contentValues.put(FavMoviesEntry.COLUMN_MOVIE_ID, mMovieDetail.get(5));
                                                  contentValues.put(FavMoviesEntry.COLUMN_TITLE, mMovieDetail.get(0));
-//                                                 contentValues.put(FavMoviesEntry.COLUMN_POSTER_PATH,mMovieDetail.get(1));
                                                  contentValues.put(FavMoviesEntry.COLUMN_POSTER_PATH, "file://" + posterPath);
                                                  contentValues.put(FavMoviesEntry.COLUMN_BACKDROP_PATH, "file://" + backdropPath);
                                                  contentValues.put(FavMoviesEntry.COLUMN_RELEASE_DATE, mMovieDetail.get(2));
@@ -332,7 +263,7 @@ public class DetailActivityFragment extends Fragment {
                                                          FavMoviesEntry.CONTENT_URI,
                                                          contentValues
                                                  );
-                                                 Log.v(LOG_TAG, "Inserted Movie Uri: " + mInsertedMovie);
+//                                                 Log.v(LOG_TAG, "Inserted Movie Uri: " + mInsertedMovie);
 
                                                  mIsFavorite = true;
                                                  Toast.makeText(getActivity(),
@@ -342,7 +273,7 @@ public class DetailActivityFragment extends Fragment {
                                      }
         );
 
-        // Code to make ListView and GridView scrollable in ScrollView
+        // Code to make GridView scrollable in ScrollView
         gridView.setOnTouchListener(new GridView.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
@@ -364,6 +295,7 @@ public class DetailActivityFragment extends Fragment {
             }
         });
 
+        // Code to make ListView scrollable in ScrollView
         listView.setOnTouchListener(new ListView.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
@@ -385,21 +317,14 @@ public class DetailActivityFragment extends Fragment {
             }
         });
 
-//        Log.v(LOG_TAG, "Just before returning rootView");
-//        setShareIntent();
 
-//        ScrollView scrollView = (ScrollView)rootView.findViewById(R.id.scroll_view);
-//        scrollView.setSmoothScrollingEnabled(true);
-//        scrollView.smoothScrollTo(0, 0);
-//        scrollView.fullScroll(ScrollView.FOCUS_UP);
         scrollView.post(new Runnable() {
             @Override
             public void run() {
                 scrollView.fullScroll(ScrollView.FOCUS_UP);
-//                scrollView.pageScroll(ScrollView.FOCUS_UP);
-//                scrollView.smoothScrollTo(0, 0);
             }
         });
+
         return rootView;
     }
 
@@ -412,9 +337,4 @@ public class DetailActivityFragment extends Fragment {
         }
     }
 
-//    @Override
-//    public void onStart() {
-//        super.onStart();
-//        new FetchReviewTask().execute(mMovieDetail.get(5));
-//    }
 }

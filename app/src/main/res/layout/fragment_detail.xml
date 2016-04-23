@@ -13,27 +13,10 @@
     android:layout_height="wrap_content"
     android:orientation="vertical">
 
-    <!--<TextView-->
-        <!--android:id="@+id/movie_title"-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:gravity="left"-->
-        <!--android:background="@color/title_background"-->
-        <!--android:textSize="@dimen/title_size"-->
-        <!--android:textColor="@color/fragment_background"-->
-        <!--android:padding="@dimen/padding"/>-->
-
-    <!--<ImageView-->
-        <!--android:id="@+id/movie_backdrop"-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="wrap_content"/>-->
-
     <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
-        <!--android:padding="@dimen/padding">-->
-
 
         <ImageView
             android:id="@+id/movie_backdrop"
@@ -138,8 +121,6 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingLeft="@dimen/padding"/>
-
-
 
 </LinearLayout>
 </ScrollView>

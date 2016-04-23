@@ -29,7 +29,7 @@
         <item>@string/pref_favorites</item>
     </string-array>
 
-    <!-- Trailera and Reviews related strings-->
+    <!-- Trailers and Reviews related strings-->
     <string name="movie_review_header">Reviews:</string>
     <string name="movie_trailer_header">Trailers:</string>
 

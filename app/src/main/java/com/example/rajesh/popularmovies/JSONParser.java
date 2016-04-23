@@ -6,9 +6,6 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 
-/**
- * Created by Rajesh on 05-Mar-16.
- */
 public class JSONParser {
 
     // These are the names of the JSON objects that need to be extracted.
@@ -30,7 +27,7 @@ public class JSONParser {
     final String TRAILER_THUMBNAIL_EXT = "/mqdefault.jpg";
     final String YOUTUBE_PREFIX = "https://www.youtube.com/watch?v=";
 
-    /** Method for getting poster links for Main Activity */
+    /** Method for getting poster links for Main Activity/Fragment */
     public String[] getPosterDataFromJson(String movieJsonStr)
             throws JSONException {
 
@@ -49,7 +46,7 @@ public class JSONParser {
         return resultStr;
     }
 
-    /** Method for getting movie details for Detail Activity */
+    /** Method for getting movie details for Detail Activity/Fragment */
     public ArrayList<String> getMovieDataFromJson(String movieJsonStr, int position )
             throws JSONException {
 
@@ -69,7 +66,7 @@ public class JSONParser {
         return resultStr;
     }
 
-    /** Method for getting movie reviews for Detail Activity */
+    /** Method for getting movie reviews for Detail Activity/Fragment */
     public String[] getReviewDataFromJson(String movieReviewStr)
             throws JSONException {
 
@@ -78,7 +75,7 @@ public class JSONParser {
         String[] resultStr = new String[reviewArray.length()];
 
         for(int i = 0; i < reviewArray.length(); i++) {
-            // Get the JSON object representing the movie detail
+            // Get the JSON object representing the reviews
             JSONObject reviewDetail = reviewArray.getJSONObject(i);
             String reviewer = reviewDetail.getString(REVIEWER);
             String review = reviewDetail.getString(REVIEW);
@@ -96,7 +93,7 @@ public class JSONParser {
         return resultStr;
     }
 
-    /** Method for getting movie trailers for Detail Activity */
+    /** Method for getting movie trailers for Detail Activity/Fragment */
     public String[] getTrailerDataFromJson(String movieTrailerStr)
             throws JSONException {
         // getting trailer keys using method getTrailerKey(movieTrailerStr)
@@ -111,7 +108,7 @@ public class JSONParser {
         return resultStr;
     }
 
-    /** Method for getting movie trailers video ids for Detail Activity and Youtube */
+    /** Method for getting movie trailers video ids for Detail Activity/Fragment and Youtube */
     public String[] getTrailerKey(String movieTrailerStr)
             throws JSONException {
 
@@ -120,10 +117,9 @@ public class JSONParser {
         String[] resultStr = new String[trailerArray.length()];
 
         for(int i = 0; i < trailerArray.length(); i++) {
-            // Get the JSON object representing the movie detail
+            // Get the JSON object representing the trailer detail
             JSONObject reviewDetail = trailerArray.getJSONObject(i);
             String trailer_key = reviewDetail.getString(TRAILER_KEY);
-            //Building the movie trailer video ids URI
             resultStr[i] = trailer_key;
         }
 

@@ -10,8 +10,7 @@ import com.example.rajesh.popularmovies.data.MovieContract.FavMoviesEntry;
 public class MovieDbHelper extends SQLiteOpenHelper {
 
     // If you change the database schema, you must increment the database version.
-//    private static final int DATABASE_VERSION = 1;
-    // Backdrop Path stored in DB for VERSION 2
+    // Marking DB VERSION as 2 as Backdrop Image Path is also stored in DB
     private static final int DATABASE_VERSION = 2;
     static final String DATABASE_NAME = "fav_movies.db";
 
@@ -21,7 +20,7 @@ public class MovieDbHelper extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase sqLiteDatabase) {
-        // Create a table to hold the information about favorite moies
+        // Create a table to hold the information about favorite movies
         final String SQL_CREATE_FAV_MOVIE_TABLE = "CREATE TABLE " + FavMoviesEntry.TABLE_NAME + " (" +
                 FavMoviesEntry._ID + " INTEGER PRIMARY KEY," +
                 FavMoviesEntry.COLUMN_MOVIE_ID + " INTEGER UNIQUE NOT NULL, " +

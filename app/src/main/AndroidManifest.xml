@@ -2,10 +2,10 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.rajesh.popularmovies">
 
-    <!-- This permission is necessary in order for Popular Movies app to perform network access -->
+    <!-- These permissions are necessary in order for Popular Movies app to perform network access and its state -->
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
-    <!-- This permission is needed to store poster and backdrop to exernal storage -->
+    <!-- This permission is needed to store poster and backdrop to external storage -->
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"
         android:maxSdkVersion="18" />
 

@@ -7,9 +7,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 
-/**
- * Created by Rajesh on 15-Apr-16.
- */
+
 public class MovieProvider extends ContentProvider{
 
     // The URI Matcher used by this content provider.
@@ -43,10 +41,9 @@ public class MovieProvider extends ContentProvider{
 
     static UriMatcher buildUriMatcher() {
         // 1) The code passed into the constructor represents the code to return for the root
-        // URI.  It's common to use NO_MATCH as the code for this case. Add the constructor below.
+        // URI.  It's common to use NO_MATCH as the code for this case.
         final UriMatcher matcher = new UriMatcher(UriMatcher.NO_MATCH);
         final String authority = MovieContract.CONTENT_AUTHORITY;
-
 
         // 2) Use the addURI function to match each of the types.  Use the constants from
         // WeatherContract to help define the types to the UriMatcher.
@@ -149,7 +146,6 @@ public class MovieProvider extends ContentProvider{
         // the uri listeners (using the content resolver) if the rowsDeleted != 0 or the selection
         // is null.
         switch (match) {
-//            case MOVIE: {
             case FAV_MOVIES:{
                 rowDeleted = db.delete(MovieContract.FavMoviesEntry.TABLE_NAME, selection, selectionArgs);
                 break;
@@ -157,12 +153,10 @@ public class MovieProvider extends ContentProvider{
             default:
                 throw new UnsupportedOperationException("Unknown uri: " + uri);
         }
-        // Oh, and you should notify the listeners here.
-        //getContext().getContentResolver().notifyChange(uri, null);
-        // return the actual rows deleted
-        //return 0;
+        // We should notify the listeners here.
         if (rowDeleted > 0)
             getContext().getContentResolver().notifyChange(uri, null);
+        // return the actual rows deleted
         return rowDeleted;
     }
 
@@ -184,12 +178,10 @@ public class MovieProvider extends ContentProvider{
             default:
                 throw new UnsupportedOperationException("Unknown uri: " + uri);
         }
-        // Oh, and you should notify the listeners here.
-        //getContext().getContentResolver().notifyChange(uri, null);
-        // Student: return the actual rows deleted
-        //return 0;
+        // We should notify the listeners here
         if (rowUpdated > 0)
             getContext().getContentResolver().notifyChange(uri, null);
+        // return the actual rows deleted
         return rowUpdated;
     }
 }

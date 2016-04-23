@@ -16,7 +16,6 @@ import java.util.ArrayList;
 public class MainActivity extends AppCompatActivity implements MainActivityFragment.Callback {
 
     private final String LOG_TAG = MainActivity.class.getSimpleName();
-//    private static final String MAINFRAGMENT_TAG = "MFTAG";
     private static final String DETAILFRAGMENT_TAG = "DFTAG";
     private boolean mTwoPane;
     private String mSortBy;
@@ -36,13 +35,11 @@ public class MainActivity extends AppCompatActivity implements MainActivityFragm
         PreferenceManager.setDefaultValues(this, R.xml.preferences, false);
 
         if (findViewById(R.id.fragment_detail_container) != null) {
-            // The detail container view will be present only in the large-screen layouts
-            // (res/layout-sw600dp). If this view is present, then the activity should be
-            // in two-pane mode.
+            // The detail container view will be present only in the large-screen layouts (res/layout-sw600dp).
+            // If this view is present, then the activity should be in two-pane mode.
             mTwoPane = true;
             // In two-pane mode, show the detail view in this activity by
-            // adding or replacing the detail fragment using a
-            // fragment transaction.
+            // adding or replacing the detail fragment using a fragment transaction.
             if (savedInstanceState == null) {
                 getSupportFragmentManager().beginTransaction()
                         .replace(R.id.fragment_detail_container, new DetailActivityFragment(), DETAILFRAGMENT_TAG)
@@ -79,30 +76,23 @@ public class MainActivity extends AppCompatActivity implements MainActivityFragm
     @Override
     protected void onResume() {
         super.onResume();
-        Log.v(LOG_TAG, "onResume() of Main Activity");
+
         String sortBy = Utility.getPreferredSortBy(this);
-        // update the SortBy in our second pane using the fragment manager
+        // update the sortBy variable in our second pane using the fragment manager
         if (sortBy != null && !sortBy.equals(mSortBy)) {
             MainActivityFragment ff = (MainActivityFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_main);
             if (null != ff) {
                 ff.updateMovieData();
-//                getSupportFragmentManager().beginTransaction()
-//                        .replace(R.id.fragment_main, new MainActivityFragment(), MAINFRAGMENT_TAG)
-//                        .commit();
             }
-            // Below lines are giving exception for setting args to null.
+
             DetailActivityFragment df = (DetailActivityFragment)getSupportFragmentManager().findFragmentByTag(DETAILFRAGMENT_TAG);
             if ( null != df ) {
-//                Bundle args = new Bundle();
-//                df.setArguments(null);
-
                 getSupportFragmentManager().beginTransaction()
                         .replace(R.id.fragment_detail_container, new DetailActivityFragment(), DETAILFRAGMENT_TAG)
                         .commit();
             }
 
             mSortBy = sortBy;
-
         }
     }
 
@@ -121,8 +111,7 @@ public class MainActivity extends AppCompatActivity implements MainActivityFragm
 
         if (mTwoPane) {
             // In two-pane mode, show the detail view in this activity by
-            // adding or replacing the detail fragment using a
-            // fragment transaction.
+            // adding or replacing the detail fragment using a fragment transaction.
             Bundle args = new Bundle();
             args.putStringArrayList(DetailActivityFragment.MOVIE_DETAIL, mMovieDetail);
 

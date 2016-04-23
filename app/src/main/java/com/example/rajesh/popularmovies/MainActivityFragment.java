@@ -30,18 +30,17 @@ import java.net.URL;
 import java.util.ArrayList;
 
 /**
- * A placeholder fragment containing a simple view for main activity.
+ * A placeholder fragment containing a grid view for main activity.
  */
 public class MainActivityFragment extends Fragment{
 
     /**
-     * A callback interface that all activities containing this fragment must
-     * implement. This mechanism allows activities to be notified of item
-     * selections.
+     * A callback interface that all activities containing this fragment must implement.
+     * This mechanism allows activities to be notified of item selections.
      */
     public interface Callback {
         /**
-         * DetailFragmentCallback for when an item has been selected.
+         * DetailActivityFragment Callback for when an item has been selected.
          */
         public void onItemSelected(ArrayList<ArrayList<String>> movieList, String movieJsonStr, int position);
     }
@@ -50,16 +49,16 @@ public class MainActivityFragment extends Fragment{
     }
 
     public final String LOG_TAG_FRAGMENT = MainActivityFragment.class.getSimpleName();
-    ImageAdapter mImageAdapter;
-    String[] mPosterLinks;
+//    public final String LOG_TAG = FetchMovieTask.class.getSimpleName();
+
+    private ImageAdapter mImageAdapter;
+    private String[] mPosterLinks;
     // String to contain the raw JSON response as a string.
     public String movieJsonStr;
-    // ArrayList to contain favorite movies info as an ArrayList
+    // ArrayList to contain favorite movies info as an ArrayList of String
     public ArrayList<ArrayList<String>> movieList = new ArrayList<ArrayList<String>>();
     private int mPosition = GridView.INVALID_POSITION;
     private static final String SELECTED_KEY = "selected_position";
-
-    public final String LOG_TAG = FetchMovieTask.class.getSimpleName();
 
     // Specify the columns we need.
     private static final String[] FAV_MOVIES_COLUMNS = {
@@ -71,8 +70,7 @@ public class MainActivityFragment extends Fragment{
             FavMoviesEntry.COLUMN_MOVIE_ID,
             FavMoviesEntry.COLUMN_BACKDROP_PATH
     };
-    // These indices are tied to FAV_MOVIES_COLUMNS.  If FAV_MOVIES_COLUMNS changes, these
-    // must change.
+    // These indices are tied to FAV_MOVIES_COLUMNS. If FAV_MOVIES_COLUMNS changes, these must change.
     public static final int COL_MOVIE_TITLE = 0;
     public static final int COL_MOVIE_POSTER_PATH = 1;
     public static final int COL_MOVIE_RELEASE_DATE = 2;
@@ -81,39 +79,22 @@ public class MainActivityFragment extends Fragment{
     public static final int COL_MOVIE_ID = 5;
     public static final int COL_MOVIE_BACKDROP_PATH = 6;
 
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        Log.v(LOG_TAG_FRAGMENT, "onCreate of MainActivityFragment");
         //Add this line in order for this fragment to handle menu events.
         setHasOptionsMenu(true);
-
-        //savedInstanceState used to restore data on rotation of phone
-//        if(savedInstanceState == null || !savedInstanceState.containsKey("posterLinks")) {
-//            mPosterLinks=new String[0];
-//            movieJsonStr = null;
-//            updateMovieData();
-//        }
-//        else {
-//            mPosterLinks = savedInstanceState.getStringArray("posterLinks");
-//            movieJsonStr = savedInstanceState.getString("movieJsonStr");
-//        }
-
     }
 
     @Override
     public void onCreateOptionsMenu (Menu menu, MenuInflater inflater) {
         // Inflate the menu; this adds items to the action bar if it is present.
         inflater.inflate(R.menu.movie_fragment, menu);
-
     }
 
-    /** Method for calling background thread with parameter got from Settings Menu */
+    /** Method for calling a background thread with parameter from Settings Menu */
     public void updateMovieData(){
-//        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getActivity());
-//        String sortBy = sharedPref.getString(getString(R.string.pref_sort), getString(R.string.pref_default));
         String sortBy = Utility.getPreferredSortBy(getActivity());
 
         if (sortBy.equals(getString(R.string.pref_favorites))){
@@ -125,23 +106,14 @@ public class MainActivityFragment extends Fragment{
                 mPosterLinks=new String[0];
                 mImageAdapter.updateData(mPosterLinks);
                 Toast.makeText(getActivity(), "No Network Access!", Toast.LENGTH_SHORT).show();
-
             }
         }
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        /*if (id == R.id.action_refresh) {
-            updateMovieData();
-            return true;
-        }*/
+        // Handle action bar item clicks here. The action bar will automatically handle clicks
+        // on the Home/Up button, so long as you specify a parent activity in AndroidManifest.xml.
 
         return super.onOptionsItemSelected(item);
     }
@@ -149,8 +121,6 @@ public class MainActivityFragment extends Fragment{
     @Override
     public void onStart() {
         super.onStart();
-        Log.v(LOG_TAG_FRAGMENT, "onStart of MainActivityFragment");
-//        updateMovieData();
     }
 
 
@@ -171,9 +141,9 @@ public class MainActivityFragment extends Fragment{
                              Bundle savedInstanceState) {
 
 
-        Log.v(LOG_TAG_FRAGMENT, "onCreateView of MainActivityFragment");
+//        Log.v(LOG_TAG_FRAGMENT, "onCreateView of MainActivityFragment");
 
-        //savedInstanceState used to restore data on rotation of phone
+        //savedInstanceState used to restore data on rotation of device
         if(savedInstanceState == null || !savedInstanceState.containsKey("posterLinks")) {
             mPosterLinks=new String[0];
             movieJsonStr = null;
@@ -184,9 +154,8 @@ public class MainActivityFragment extends Fragment{
             mPosterLinks = savedInstanceState.getStringArray("posterLinks");
             movieJsonStr = savedInstanceState.getString("movieJsonStr");
             mImageAdapter = new ImageAdapter(getActivity(), mPosterLinks);
+
             // To get Favorite Movie Details in case of rotation of device
-//            SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getActivity());
-//            String sortBy = sharedPref.getString(getString(R.string.pref_sort), getString(R.string.pref_default));
             String sortBy = Utility.getPreferredSortBy(getActivity());
             if (sortBy.equals(getString(R.string.pref_favorites))) {
                 getFavoriteMovies();
@@ -200,29 +169,11 @@ public class MainActivityFragment extends Fragment{
         GridView gridView = (GridView)rootView.findViewById(R.id.grid_view);
         gridView.setAdapter(mImageAdapter);
 
-        // Launch the Detail Activity on clicking the poster thumbnail
+        // Notify MainActivity via Callback on clicking the poster thumbnail
         gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                //Toast.makeText(getActivity(), mImageAdapter.getItem(position).toString(), Toast.LENGTH_SHORT).show();
-//                Intent showDetail = new Intent(getActivity(), DetailActivity.class);
-//                try {
-////                    SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getActivity());
-////                    String sortBy = sharedPref.getString(getString(R.string.pref_sort), getString(R.string.pref_default));
-//                    String sortBy = Utility.getPreferredSortBy(getActivity());
-//                    if (sortBy.equals(getString(R.string.pref_favorites))){
-//                        showDetail.putStringArrayListExtra(Intent.EXTRA_TEXT, movieList.get(position));
-//                    }else {
-//                        showDetail.putStringArrayListExtra(Intent.EXTRA_TEXT, new JSONParser().getMovieDataFromJson(movieJsonStr, position));
-//                    }
-//
-//                    startActivity(showDetail);
-//                } catch (JSONException e) {
-//                    Log.e(LOG_TAG, "JSON Error", e);
-//                }
-
                 ((Callback) getActivity()).onItemSelected(movieList, movieJsonStr, position);
-
                 mPosition = position;
             }
         });
@@ -238,13 +189,7 @@ public class MainActivityFragment extends Fragment{
         return rootView;
     }
 
-//    @Override
-//    public void onDestroy() {
-//        super.onDestroy();
-////        mImageAdapter.updateData(new String[]{});
-//
-//    }
-
+    // Method to get Favorite Movies from database and update the image adapter accordingly
     public void getFavoriteMovies(){
         Cursor movieCursor = getActivity().getContentResolver().query(
                 MovieContract.FavMoviesEntry.CONTENT_URI,
@@ -254,15 +199,13 @@ public class MainActivityFragment extends Fragment{
                 null
         );
 
-//        String[] posterLink = new String[movieCursor.getCount()];
-        Log.v(LOG_TAG, "No. of Favorite Movies: " + movieCursor.getCount());
+        Log.v(LOG_TAG_FRAGMENT, "Number of Favorite Movies: " + movieCursor.getCount());
         ArrayList<String> posterLink = new ArrayList<String>();
 
-
         while (movieCursor.moveToNext()){
-            Log.v(LOG_TAG, "Movie Title from DB: " + movieCursor.getString(COL_MOVIE_TITLE));
-            Log.v(LOG_TAG, "Poster Link from DB: " + movieCursor.getString(COL_MOVIE_POSTER_PATH));
-            Log.v(LOG_TAG, "Backdrop Link from DB: " + movieCursor.getString(COL_MOVIE_BACKDROP_PATH));
+//            Log.v(LOG_TAG_FRAGMENT, "Movie Title from DB: " + movieCursor.getString(COL_MOVIE_TITLE));
+//            Log.v(LOG_TAG_FRAGMENT, "Poster Link from DB: " + movieCursor.getString(COL_MOVIE_POSTER_PATH));
+//            Log.v(LOG_TAG_FRAGMENT, "Backdrop Link from DB: " + movieCursor.getString(COL_MOVIE_BACKDROP_PATH));
 
             posterLink.add(movieCursor.getString(COL_MOVIE_POSTER_PATH));
 
@@ -275,10 +218,6 @@ public class MainActivityFragment extends Fragment{
             movieInfo.add(movieCursor.getString(COL_MOVIE_OVERVIEW));
             movieInfo.add(String.valueOf(movieCursor.getInt(COL_MOVIE_ID)));
             movieInfo.add(movieCursor.getString(COL_MOVIE_BACKDROP_PATH));
-
-//            for (String i:movieInfo){
-//                Log.v(LOG_TAG, "movieInfo: " + i );
-//            }
 
             movieList.add(movieInfo);
         }
@@ -305,13 +244,11 @@ public class MainActivityFragment extends Fragment{
             try {
                 final String SCHEME="http";
                 final String FORECAST_BASE_URL="//api.themoviedb.org/3/movie/";
-                //final String QUERY_PARAM="sort_by";
                 final String APIKEY_PARAM="api_key";
 
                 Uri.Builder builtUri=new Uri.Builder();
                 builtUri.scheme(SCHEME);
                 builtUri.path(FORECAST_BASE_URL);
-                //builtUri.appendQueryParameter(QUERY_PARAM, params[0]);
                 builtUri.appendPath(params[0]);
                 builtUri.appendQueryParameter(APIKEY_PARAM, BuildConfig.THE_MOVIE_DB_API_KEY);
                 Log.v(LOG_TAG, "Build URI:" + builtUri.toString());
@@ -325,8 +262,6 @@ public class MainActivityFragment extends Fragment{
                 InputStream inputStream = urlConnection.getInputStream();
                 StringBuffer buffer = new StringBuffer();
                 if (inputStream == null) {
-                    // Nothing to do.
-                    //movieJsonStr = null;
                     return null;
                 }
                 reader = new BufferedReader(new InputStreamReader(inputStream));

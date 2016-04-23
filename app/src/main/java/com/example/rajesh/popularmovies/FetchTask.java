@@ -1,8 +1,5 @@
 package com.example.rajesh.popularmovies;
 
-/**
- * Created by Rajesh on 10-Apr-16.
- */
 
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -19,7 +16,9 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-/** Background Thread for getting Movie Details through the network call to an API */
+/** Background Thread for getting Trailer and/or Reviews through the network call to an API.
+ * A single class to fetch Trailers or Reviews Info based on the type of FetchTask object created.
+ */
 public class FetchTask extends AsyncTask<String, Void, String[]> {
 
     public final String LOG_TAG = FetchTask.class.getSimpleName();
@@ -64,7 +63,6 @@ public class FetchTask extends AsyncTask<String, Void, String[]> {
             Uri.Builder builtUri=new Uri.Builder();
             builtUri.scheme(SCHEME);
             builtUri.path(FORECAST_BASE_URL);
-            //builtUri.appendQueryParameter(QUERY_PARAM, params[0]);
             builtUri.appendPath(params[0]);
             builtUri.appendPath(REVIEWS_TRAILERS);
             builtUri.appendQueryParameter(APIKEY_PARAM, BuildConfig.THE_MOVIE_DB_API_KEY);
@@ -95,7 +93,6 @@ public class FetchTask extends AsyncTask<String, Void, String[]> {
 
             if (buffer.length() == 0) {
                 // Stream was empty.  No point in parsing.
-                //movieJsonStr = null;
                 return null;
             }
             movieReviewStr = buffer.toString();
@@ -103,9 +100,7 @@ public class FetchTask extends AsyncTask<String, Void, String[]> {
 
         } catch (IOException e) {
             Log.e(LOG_TAG, "Error ", e);
-            // If the code didn't successfully get the movie data, there's no point in attempting
-            // to parse it.
-            //movieJsonStr = null;
+            // If the code didn't successfully get the movie data, there's no point in attempting to parse it.
             return null;
         } finally{
             if (urlConnection != null) {
@@ -121,19 +116,17 @@ public class FetchTask extends AsyncTask<String, Void, String[]> {
         }
 
         try{
-
-//            String[] movieReviews = new JSONParser().getReviewDataFromJson(movieReviewStr);
-            String[] movieReviews = new String[0];
+            String[] movieReviewsTrailers = new String[0];
             switch (getFetch()){
                 case "TRAILERS":
-                    movieReviews = new JSONParser().getTrailerDataFromJson(movieReviewStr);
+                    movieReviewsTrailers = new JSONParser().getTrailerDataFromJson(movieReviewStr);
                     break;
                 case "REVIEWS":
-                    movieReviews = new JSONParser().getReviewDataFromJson(movieReviewStr);
+                    movieReviewsTrailers = new JSONParser().getReviewDataFromJson(movieReviewStr);
                     break;
             }
-            //Log.v(LOG_TAG, movieReviews[0]);
-            return movieReviews;
+
+            return movieReviewsTrailers;
         }
         catch (JSONException e) {
             Log.e(LOG_TAG, "JSON Related Error", e);
@@ -147,10 +140,9 @@ public class FetchTask extends AsyncTask<String, Void, String[]> {
 
         switch (getFetch()){
             case "TRAILERS":
-//                DetailActivityFragment.sTrailers = strings;
-//                DetailActivityFragment.sTrailerAdapter.updateData(DetailActivityFragment.sTrailers);
                 mDetailActivityFragment.trailers = strings;
                 mDetailActivityFragment.trailerAdapter.updateData(mDetailActivityFragment.trailers);
+                // Setting Share Intent as now we have Trailer info
                 mDetailActivityFragment.setShareIntent();
                 break;
             case "REVIEWS":
@@ -160,8 +152,5 @@ public class FetchTask extends AsyncTask<String, Void, String[]> {
                 mDetailActivityFragment.reviewAdapter.notifyDataSetChanged();
                 break;
             }
-//        mDetailActivityFragment.scrollView.fullScroll(ScrollView.FOCUS_UP);;
-//        mDetailActivityFragment.scrollView.smoothScrollTo(0, 0);
-
     }
 }

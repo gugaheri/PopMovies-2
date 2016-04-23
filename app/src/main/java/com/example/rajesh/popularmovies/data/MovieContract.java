@@ -15,8 +15,7 @@ public class MovieContract {
     // device.
     public static final String CONTENT_AUTHORITY = "com.example.rajesh.popularmovies";
 
-    // Use CONTENT_AUTHORITY to create the base of all URI's which apps will use to contact
-    // the content provider.
+    // Use CONTENT_AUTHORITY to create the base of all URI's which apps will use to contact the content provider.
     public static final Uri BASE_CONTENT_URI = Uri.parse("content://" + CONTENT_AUTHORITY);
 
     // Possible paths (appended to base content URI for possible URI's)
@@ -45,11 +44,6 @@ public class MovieContract {
         public static final String COLUMN_OVERVIEW = "overview";
         public static final String COLUMN_USER_RATING = "user_rating";
         public static final String COLUMN_RELEASE_DATE = "release_date";
-
-
-//        public static Uri buildMovieUri(long id) {
-//            return ContentUris.withAppendedId(CONTENT_URI, id);
-//        }
 
         public static Uri buildMovieUri(String id) {
             return CONTENT_URI.buildUpon().appendPath(id).build();
