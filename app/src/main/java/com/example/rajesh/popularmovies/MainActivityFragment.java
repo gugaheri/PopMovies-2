@@ -122,7 +122,10 @@ public class MainActivityFragment extends Fragment{
             if(Utility.isNetworkAvailable(getContext())) {
                 new FetchMovieTask().execute(sortBy);
             } else {
+                mPosterLinks=new String[0];
+                mImageAdapter.updateData(mPosterLinks);
                 Toast.makeText(getActivity(), "No Network Access!", Toast.LENGTH_SHORT).show();
+
             }
         }
     }

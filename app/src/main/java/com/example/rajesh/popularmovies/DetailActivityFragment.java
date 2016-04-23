@@ -31,6 +31,9 @@ import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 
+import butterknife.Bind;
+import butterknife.ButterKnife;
+
 /**
  * A placeholder fragment containing a simple view.
  */
@@ -39,6 +42,17 @@ public class DetailActivityFragment extends Fragment {
     public DetailActivityFragment() {
         setHasOptionsMenu(true);
     }
+
+    @Bind(R.id.scroll_view) ScrollView scrollView;
+    @Bind(R.id.movie_backdrop) ImageView movieBackdrop;
+    @Bind(R.id.movie_title) TextView movieTitle;
+    @Bind(R.id.movie_poster) ImageView moviePoster;
+    @Bind(R.id.release_date) TextView releaseDate;
+    @Bind(R.id.vote_average) TextView voteAverage;
+    @Bind(R.id.movie_overview) TextView movieOverview;
+    @Bind(R.id.trailer_grid_view) GridView gridView;
+    @Bind(R.id.listview_reviews) ListView listView;
+    @Bind(R.id.fav_button) ImageButton favButton;
 
     public final String LOG_TAG = DetailActivityFragment.class.getSimpleName();
     private ArrayList<String> mMovieDetail = new ArrayList<String>();
@@ -61,7 +75,7 @@ public class DetailActivityFragment extends Fragment {
     public String[] trailers;
     public ImageAdapter trailerAdapter;
     public ArrayAdapter<String> reviewAdapter;
-    public ScrollView scrollView;
+//    public ScrollView scrollView;
 
 
     @Override
@@ -180,24 +194,26 @@ public class DetailActivityFragment extends Fragment {
 
         View rootView = inflater.inflate(R.layout.fragment_detail, container, false);
 
-        scrollView = (ScrollView)rootView.findViewById(R.id.scroll_view);
+        ButterKnife.bind(this, rootView);
 
-        ImageView movieBackdrop = (ImageView)rootView.findViewById(R.id.movie_backdrop);
+//        scrollView = (ScrollView)rootView.findViewById(R.id.scroll_view);
+
+//        ImageView movieBackdrop = (ImageView)rootView.findViewById(R.id.movie_backdrop);
         Picasso.with(getActivity()).load(mMovieDetail.get(6)).fit().placeholder(R.drawable.no_image_available).into(movieBackdrop);
 
-        TextView movieTitle = (TextView)rootView.findViewById(R.id.movie_title);
+//        TextView movieTitle = (TextView)rootView.findViewById(R.id.movie_title);
         movieTitle.setText(mMovieDetail.get(0));
 
-        ImageView moviePoster = (ImageView)rootView.findViewById(R.id.movie_poster);
+//        ImageView moviePoster = (ImageView)rootView.findViewById(R.id.movie_poster);
         Picasso.with(getActivity()).load(mMovieDetail.get(1)).fit().placeholder(R.drawable.no_image_available).into(moviePoster);
 
-        TextView releaseDate = (TextView)rootView.findViewById(R.id.release_date);
+//        TextView releaseDate = (TextView)rootView.findViewById(R.id.release_date);
         releaseDate.setText(mMovieDetail.get(2));
 
-        TextView voteAverage = (TextView)rootView.findViewById(R.id.vote_average);
+//        TextView voteAverage = (TextView)rootView.findViewById(R.id.vote_average);
         voteAverage.setText(mMovieDetail.get(3) + VOTE_MAX);
 
-        TextView movieOverview = (TextView)rootView.findViewById(R.id.movie_overview);
+//        TextView movieOverview = (TextView)rootView.findViewById(R.id.movie_overview);
         movieOverview.setText(mMovieDetail.get(4));
 
         trailerAdapter = new ImageAdapter(getActivity(), trailers);
@@ -208,11 +224,11 @@ public class DetailActivityFragment extends Fragment {
 //        new FetchTrailerTask().execute(mMovieDetail.get(5));
 //        new FetchReviewTask().execute(mMovieDetail.get(5));
 
-        GridView gridView = (GridView)rootView.findViewById(R.id.trailer_grid_view);
+//        GridView gridView = (GridView)rootView.findViewById(R.id.trailer_grid_view);
         gridView.setAdapter(trailerAdapter);
 
         //Log.v(LOG_TAG, "reviews:" + reviews[0]);
-        ListView listView = (ListView) rootView.findViewById(R.id.listview_reviews);
+//        ListView listView = (ListView) rootView.findViewById(R.id.listview_reviews);
 //        reviewAdapter.notifyDataSetChanged();
         listView.setAdapter(reviewAdapter);
 
@@ -232,7 +248,7 @@ public class DetailActivityFragment extends Fragment {
             }
         });
 
-        final ImageButton favButton = (ImageButton) rootView.findViewById(R.id.fav_button);
+//        final ImageButton favButton = (ImageButton) rootView.findViewById(R.id.fav_button);
 
         mMovieCursor = getActivity().getContentResolver().query(
                 FavMoviesEntry.buildMovieUri(mMovieDetail.get(5)),
