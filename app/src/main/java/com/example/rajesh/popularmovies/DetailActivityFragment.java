@@ -219,7 +219,7 @@ public class DetailActivityFragment extends Fragment {
                                                          FavMoviesEntry.COLUMN_MOVIE_ID + " = ?",
                                                          new String[]{mMovieDetail.get(5)}
                                                  );
-//                                                 Log.v(LOG_TAG, "No. of Movie deleted: " + mDeletedRows);
+                                                 Log.v(LOG_TAG, "Number of Movie deleted: " + mDeletedRows);
                                                  // Deleting the saved poster from device storage has been commented out
                                                  // so that setting/unsetting favorite can work offline in Detail Activity/Fragment for Favorite Movie
                                                  // Delete the saved poster image from internal storage
@@ -263,7 +263,7 @@ public class DetailActivityFragment extends Fragment {
                                                          FavMoviesEntry.CONTENT_URI,
                                                          contentValues
                                                  );
-//                                                 Log.v(LOG_TAG, "Inserted Movie Uri: " + mInsertedMovie);
+                                                 Log.v(LOG_TAG, "Inserted Movie Uri: " + mInsertedMovie);
 
                                                  mIsFavorite = true;
                                                  Toast.makeText(getActivity(),
